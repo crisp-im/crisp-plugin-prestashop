@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>Crisp</name>
+	<displayName><![CDATA[Crisp]]></displayName>
+	<version><![CDATA[0.1]]></version>
+	<description><![CDATA[Beatufil Live chat and live support for your product]]></description>
+	<displayName><![CDATA[Crisp Communications]]></displayName>
+	<tab><![CDATA[Tools]]></tab>
+	<is_configurable>1</is_configurable>
+	<need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>
