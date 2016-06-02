@@ -2,12 +2,15 @@
 
 /** Crisp Communications **/
 
-class Crisp extends Module{
+if (!defined('_PS_VERSION_'))
+  exit;
+
+class crisp extends Module{
 
   public function __construct()
   {
-    $this->name = 'Crisp';
-    $this->tab = 'Tools';
+    $this->name = 'crisp';
+    $this->tab = 'front_office_features';
     $this->version = 0.1;
 
     parent::__construct();
@@ -15,6 +18,7 @@ class Crisp extends Module{
     $this->page = basename(__FILE__, '.php');
     $this->displayName = $this->l('Crisp');
     $this->description = $this->l('Beatufil Live chat and live support for your product');
+    $this->module_key = 'cc67e1a6e3a327f43ecc8037cd7f459e';
   }
 
   public function install()
