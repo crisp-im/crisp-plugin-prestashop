@@ -11,13 +11,13 @@ class crisp extends Module{
   {
     $this->name = 'crisp';
     $this->tab = 'front_office_features';
-    $this->version = 0.1;
+    $this->version = 0.2;
 
     parent::__construct();
 
     $this->page = basename(__FILE__, '.php');
     $this->displayName = $this->l('Crisp');
-    $this->description = $this->l('Beatufil Live chat and live support for your product');
+    $this->description = $this->l('Beautiful Live chat and live support for your product');
     $this->module_key = 'cc67e1a6e3a327f43ecc8037cd7f459e';
   }
 
@@ -39,8 +39,10 @@ class crisp extends Module{
   public function hookDisplayHeader($params)
   {
     $website_id = Configuration::get('WEBSITE_ID');
-    print "<script type='text/javascript'>CRISP_WEBSITE_ID = '$website_id';(function(){d=document;s=d.createElement('script');s.src='https://client.crisp.im/l.js';s.async=1;d.getElementsByTagName('head')[0].appendChild(s);})();</script>";
-    return true;
+    $this->context->smarty->assign(array(
+      'website_id' => $website_id
+    ));
+    return $this->display(__FILE__, 'crisp.tpl');
   }
 
   public function getContent()
