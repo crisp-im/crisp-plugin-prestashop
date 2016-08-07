@@ -1,10 +1,11 @@
-<?php
-
-/** Crisp Communications **/
-
-?>
+{*
+*  @author  Baptiste Jamin <baptiste@crisp.im>
+*  @copyright  Crisp IM 2016
+*  @license
+*  @version  Release: $Revision: 0.3.0 $
+*}
 <script type='text/javascript'>
-CRISP_WEBSITE_ID = '{$website_id}';
+CRISP_WEBSITE_ID = "{$website_id|escape:'htmlall':'UTF-8'}";
 (function(){
   d=document;
   s=d.createElement('script');

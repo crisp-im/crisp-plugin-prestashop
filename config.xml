@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
 	<name>crisp</name>
-	<displayName><![CDATA[Crisp]]></displayName>
-	<version><![CDATA[0.3]]></version>
-	<description><![CDATA[Beautiful Live chat and live support for your product]]></description>
+	<displayName><![CDATA[Crisp Livechat]]></displayName>
+	<version><![CDATA[0.3.0]]></version>
+	<description><![CDATA[Crisp is a free and beautiful livechat to interact with customers.]]></description>
 	<author><![CDATA[Crisp IM]]></author>
 	<tab><![CDATA[front_office_features]]></tab>
 	<is_configurable>1</is_configurable>
