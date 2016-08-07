@@ -2,9 +2,9 @@
 <module>
 	<name>crisp</name>
 	<displayName><![CDATA[Crisp]]></displayName>
-	<version><![CDATA[0.1]]></version>
+	<version><![CDATA[0.3]]></version>
 	<description><![CDATA[Beautiful Live chat and live support for your product]]></description>
-	<author><![CDATA[]]></author>
+	<author><![CDATA[Crisp IM]]></author>
 	<tab><![CDATA[front_office_features]]></tab>
 	<is_configurable>1</is_configurable>
 	<need_instance>1</need_instance>
