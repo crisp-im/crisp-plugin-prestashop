@@ -74,7 +74,9 @@ class Crisp extends Module
 
     public function getContent()
     {
-        if (!empty(Tools::getValue("crisp_website_id"))) {
+        $get_website_id = Tools::getValue("crisp_website_id");
+
+        if (isset($get_website_id) && !empty($get_website_id)) {
             Configuration::updateValue("WEBSITE_ID", Tools::getValue("crisp_website_id"));
         }
         $website_id =  Configuration::get('WEBSITE_ID');
