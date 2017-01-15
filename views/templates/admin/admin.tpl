@@ -12,7 +12,7 @@
 		</div>
 		<div class="wrap crisp-wrap">
 		    <div class="crisp-modal">
-		     	<p class="crisp-subtitle">You can now use Crisp from your homepage</p>
+		     	<p class="alert alert-success">You can now use Crisp from your homepage</p>
 		     	<a class="crisp-button crisp-neutral" href="https://app.crisp.im/settings/website/{$website_id|escape:'htmlall':'UTF-8'}">Go to my Crisp settings</a>
      			<a class="crisp-button crisp" href="{$add_to_crisp_link|escape:'htmlall':'UTF-8'}">Reconfigure</a>
 		    </div>
@@ -25,7 +25,7 @@
 		</div>
 		<div class="wrap crisp-wrap">
 		    <div class="crisp-modal">
-		      <p class="crisp-subtitle">This link will redirect you to Crisp and configure your Wordpress. Magic</p>
+		      <p class="alert alert-info">This link will redirect you to Crisp and configure your Prestashop. Magic</p>
 		       	<a class="crisp-button crisp-neutral" href="https://app.crisp.im/settings/website/{$website_id|escape:'htmlall':'UTF-8'}">Go to my Crisp settings</a>
      			<a class="crisp-button crisp" href="{$add_to_crisp_link|escape:'htmlall':'UTF-8'}">Connect with Crisp</a>
 		    </div>
