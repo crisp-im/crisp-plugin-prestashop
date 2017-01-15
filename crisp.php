@@ -66,9 +66,12 @@ class Crisp extends Module
 
     public function hookDisplayHeader($params)
     {
+        global $cookie;
+
         $website_id = Configuration::get('WEBSITE_ID');
         $this->context->smarty->assign(array(
-          'website_id' => $website_id
+            'customer' => $this->context->customer,
+            'website_id' => $website_id
         ));
         return $this->display(__FILE__, 'crisp.tpl');
     }

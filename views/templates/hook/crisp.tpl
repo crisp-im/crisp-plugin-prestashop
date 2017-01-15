@@ -5,6 +5,7 @@
 *  @version  Release: $Revision: 0.3.0 $
 *}
 <script type='text/javascript'>
+
 CRISP_WEBSITE_ID = "{$website_id|escape:'htmlall':'UTF-8'}";
 (function(){
   d=document;
@@ -13,5 +14,13 @@ CRISP_WEBSITE_ID = "{$website_id|escape:'htmlall':'UTF-8'}";
   s.async=1;
   d.getElementsByTagName('head')[0].appendChild(s);
 })();
+
+{if $customer->isLogged() == true}
+	window.CRISP_READY_TRIGGER = function() {
+	  	$crisp.push(["set", "user:nickname", "{$customer->firstname} {$customer->lastname}"]);
+		$crisp.push(["set", "user:email", "{$customer->email}"]);
+	};
+{/if}
+
 </script>
 
