@@ -5,6 +5,15 @@
 *  @version  Release: $Revision: 0.3.0 $
 *}
 
+
+<script>
+	function linkWithCrisp () {
+		var add_to_crisp_link = "https://app.crisp.im/initiate/plugin/be40c894-22bb-408c-8fdc-aafb5e6b1985?payload=";
+		add_to_crisp_link += Base64.encode("{$http_callback|escape:'javascript':'UTF-8'}")
+		window.open(add_to_crisp_link,"_self")
+	}
+</script>
+
 {if $is_crisp_working == true}
 	<div class="panel">
 		<div class="panel-heading">
@@ -14,7 +23,7 @@
 		    <div class="crisp-modal">
 		     	<p class="alert alert-success">You can now use Crisp from your homepage</p>
 		     	<a class="crisp-button crisp-neutral" href="https://app.crisp.im/settings/website/{$website_id|escape:'htmlall':'UTF-8'}">Go to my Crisp settings</a>
-     			<a class="crisp-button crisp" href="{$add_to_crisp_link|escape:'htmlall':'UTF-8'}">Reconfigure</a>
+     			<a class="crisp-button crisp" href="#" onclick="linkWithCrisp()">Reconfigure</a>
 		    </div>
 	  	</div>
 	</div>
@@ -27,7 +36,7 @@
 		    <div class="crisp-modal">
 		      <p class="alert alert-info">This link will redirect you to Crisp and configure your Prestashop. Magic</p>
 		       	<a class="crisp-button crisp-neutral" href="https://app.crisp.im/settings/website/{$website_id|escape:'htmlall':'UTF-8'}">Go to my Crisp settings</a>
-     			<a class="crisp-button crisp" href="{$add_to_crisp_link|escape:'htmlall':'UTF-8'}">Connect with Crisp</a>
+     			<a class="crisp-button crisp" href="#" onclick="linkWithCrisp()">Connect with Crisp</a>
 		    </div>
 	  	</div>
 	</div>

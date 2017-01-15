@@ -22,7 +22,7 @@ class Crisp extends Module
         $this->page = basename(__FILE__, '.php');
         $this->bootstrap = true;
         $this->description =
-            $this->l('Crisp is a free and beautiful livechat to interact with customers.');
+            $this->l('Crisp is the best livechat to interact with customers.');
 
         parent::__construct();
     }
@@ -66,8 +66,6 @@ class Crisp extends Module
 
     public function hookDisplayHeader($params)
     {
-        global $cookie;
-
         $website_id = Configuration::get('WEBSITE_ID');
         $this->context->smarty->assign(array(
             'customer' => $this->context->customer,
@@ -91,17 +89,13 @@ class Crisp extends Module
             ($_SERVER['SERVER_PORT'] == 443) ? "s://" : "://"
         ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
-        $payload = base64_encode($http_callback);
-
-        $add_to_crisp_link = "https://app.crisp.im/initiate/plugin/".
-        "be40c894-22bb-408c-8fdc-aafb5e6b1985?payload=$payload";
-
         $this->context->smarty->assign(array(
           'website_id' => $website_id,
-          'add_to_crisp_link' => $add_to_crisp_link,
-          "is_crisp_working" => $is_crisp_working
+          "is_crisp_working" => $is_crisp_working,
+          "http_callback" => $http_callback
         ));
 
+        $this->context->controller->addJS($this->_path."views/js/base64.js", 'all');
         $this->context->controller->addCSS($this->_path."views/css/style.css", 'all');
         return $this->display(__FILE__, "views/templates/admin/admin.tpl");
     }

@@ -17,8 +17,8 @@ CRISP_WEBSITE_ID = "{$website_id|escape:'htmlall':'UTF-8'}";
 
 {if $customer->isLogged() == true}
 	window.CRISP_READY_TRIGGER = function() {
-	  	$crisp.push(["set", "user:nickname", "{$customer->firstname} {$customer->lastname}"]);
-		$crisp.push(["set", "user:email", "{$customer->email}"]);
+	  	$crisp.push(["set", "user:nickname", "{$customer->firstname|escape:'htmlall':'UTF-8'} {$customer->lastname|escape:'htmlall':'UTF-8'}"]);
+		$crisp.push(["set", "user:email", "{$customer->email|escape:'htmlall':'UTF-8'}"]);
 	};
 {/if}
 
