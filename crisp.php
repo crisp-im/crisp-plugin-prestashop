@@ -17,9 +17,10 @@ class Crisp extends Module
         $this->displayName = $this->l('Crisp Livechat');
         $this->author = 'Crisp IM';
         $this->tab = 'front_office_features';
-        $this->version = "0.3.0";
+        $this->version = "0.3.1";
         $this->module_key = 'cc67e1a6e3a327f43ecc8037cd7f459e';
         $this->page = basename(__FILE__, '.php');
+        $this->bootstrap = true;
         $this->description =
             $this->l('Crisp is a free and beautiful livechat to interact with customers.');
 
@@ -80,7 +81,9 @@ class Crisp extends Module
             Configuration::updateValue("WEBSITE_ID", Tools::getValue("crisp_website_id"));
         }
         $website_id =  Configuration::get('WEBSITE_ID');
+        
         $is_crisp_working = !empty($website_id);
+
         $http_callback = "http" . (
             ($_SERVER['SERVER_PORT'] == 443) ? "s://" : "://"
         ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -91,8 +94,7 @@ class Crisp extends Module
         "be40c894-22bb-408c-8fdc-aafb5e6b1985?payload=$payload";
 
         $this->context->smarty->assign(array(
-          'img_check' => $this->_path. "views/img/check.png",
-          'img_link_with_crisp' => $this->_path. "views/img/link-with-crisp.png",
+          'website_id' => $website_id,
           'add_to_crisp_link' => $add_to_crisp_link,
           "is_crisp_working" => $is_crisp_working
         ));
