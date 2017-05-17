@@ -2,7 +2,7 @@
 *  @author  Baptiste Jamin <baptiste@crisp.im>
 *  @copyright  Crisp IM 2016
 *  @license
-*  @version  Release: $Revision: 0.3.0 $
+*  @version  Release: $Revision: 0.3.2 $
 *}
 
 

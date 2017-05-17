@@ -2,7 +2,7 @@
 <module>
 	<name>crisp</name>
 	<displayName><![CDATA[Crisp Livechat]]></displayName>
-	<version><![CDATA[0.3.1]]></version>
+	<version><![CDATA[0.3.2]]></version>
 	<description><![CDATA[Crisp is the best livechat to interact with customers.]]></description>
 	<author><![CDATA[Crisp IM]]></author>
 	<tab><![CDATA[front_office_features]]></tab>

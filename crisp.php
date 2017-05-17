@@ -5,7 +5,7 @@
 * @author    Baptiste Jamin <baptiste@crisp.im>
 * @copyright Crisp IM 2014
 * @license
-* @version   Release: $Revision: 0.3.0 $
+* @version   Release: $Revision: 0.3.2 $
 */
 
 class Crisp extends Module
@@ -17,7 +17,7 @@ class Crisp extends Module
         $this->displayName = $this->l('Crisp Livechat');
         $this->author = 'Crisp IM';
         $this->tab = 'front_office_features';
-        $this->version = "0.3.1";
+        $this->version = "0.3.2";
         $this->module_key = 'cc67e1a6e3a327f43ecc8037cd7f459e';
         $this->page = basename(__FILE__, '.php');
         $this->bootstrap = true;
@@ -68,8 +68,8 @@ class Crisp extends Module
     {
         $website_id = Configuration::get('WEBSITE_ID');
         $this->context->smarty->assign(array(
-            'customer' => $this->context->customer,
-            'website_id' => $website_id
+            'crisp_customer' => $this->context->customer,
+            'crisp_website_id' => $website_id
         ));
         return $this->display(__FILE__, 'crisp.tpl');
     }
