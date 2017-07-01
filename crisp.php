@@ -2,10 +2,10 @@
 /**
 * Crisp Module
 *
-* @author    Baptiste Jamin <baptiste@crisp.im>
+* @author    Baptiste Jamin <baptiste@crisp.chat>
 * @copyright Crisp IM 2014
 * @license
-* @version   Release: $Revision: 0.3.2 $
+* @version   Release: $Revision: 0.3.3 $
 */
 
 class Crisp extends Module
@@ -17,7 +17,7 @@ class Crisp extends Module
         $this->displayName = $this->l('Crisp Livechat');
         $this->author = 'Crisp IM';
         $this->tab = 'front_office_features';
-        $this->version = "0.3.2";
+        $this->version = "0.3.3";
         $this->module_key = 'cc67e1a6e3a327f43ecc8037cd7f459e';
         $this->page = basename(__FILE__, '.php');
         $this->bootstrap = true;

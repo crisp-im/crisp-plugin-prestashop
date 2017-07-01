@@ -1,8 +1,8 @@
 {*
-*  @author  Baptiste Jamin <baptiste@crisp.im>
+*  @author  Baptiste Jamin <baptiste@crisp.chat>
 *  @copyright  Crisp IM 2016
 *  @license
-*  @version  Release: $Revision: 0.3.2 $
+*  @version  Release: $Revision: 0.3.3 $
 *}
 <script type='text/javascript'>
 window.$crisp=[];
@@ -10,7 +10,7 @@ window.CRISP_WEBSITE_ID = "{$crisp_website_id|escape:'htmlall':'UTF-8'}";
 (function(){
   d=document;
   s=d.createElement('script');
-  s.src='https://client.crisp.im/l.js';
+  s.src='https://client.crisp.chat/l.js';
   s.async=1;
   d.getElementsByTagName('head')[0].appendChild(s);
 
