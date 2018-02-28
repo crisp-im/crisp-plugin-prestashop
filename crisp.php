@@ -5,7 +5,7 @@
 * @author    Baptiste Jamin <baptiste@crisp.chat>
 * @copyright Crisp IM 2014
 * @license
-* @version   Release: $Revision: 0.3.3 $
+* @version   Release: $Revision: 0.3.4 $
 */
 
 class Crisp extends Module
