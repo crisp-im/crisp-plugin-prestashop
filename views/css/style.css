@@ -1,14 +1,41 @@
+#logo {
+  width: 70px;
+  margin-right: 10px;
+}
+
+.btn-toolbar {
+  display: inherit !important;
+}
+.dropdown-toggle:not(.dropdown-toggle-split):after {
+  display: none;
+}
+
+.crisp-panel {
+  background: white;
+  border: 1px solid #E2E2E2;
+  padding: 1.5rem;
+}
+
+.crisp-modal {
+  padding: 0 50px;
+}
+
 .crisp-modal .crisp-button {
   border: 0 none;
   font-weight: bold;
   text-align: center;
-  text-decoration: none;
+  text-decoration: none!important;
   padding: 14px 30px 15px;
   cursor: pointer;
   border-radius: .25rem;
   width: 200px;
   margin-bottom: 12px;
   display: block;
+  width: 100%;
+}
+
+.crisp-modal .crisp-button:hover {
+  opacity: 0.8;
 }
 
 .crisp-modal .crisp-button..crisp-success {
@@ -34,13 +61,7 @@
   font-size: 22px;
   font-weight: bold;
   margin: 0;
-}
-
-.crisp-subtitle {
-  color: #555459;
-  font-size: 16px;
-  font-weight: normal;
-  margin: 12px 0 26px;
+  margin-bottom: 20px;
 }
 
 .crisp-subtitle {
@@ -53,4 +74,43 @@
 .crisp-notice {
   font-size: 14px;
   margin: 12px 0 26px;
+}
+
+.crisp-options {
+  margin-top: 14px
+}
+
+.crisp-option {
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-top: 1px solid #e8eaeb;
+}
+
+.crisp-option:last-child {
+  border-bottom: 1px solid #e8eaeb;
+  margin-bottom: 8px;
+}
+
+.crisp-btn-group {
+  display: flex;
+  justify-content: center;
+}
+
+.crisp-label-subdued {
+  font-weight: 100;
+  color: #aeaeae;
+}
+
+.crisp-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.switch-input-disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+  pointer-events: none;
 }

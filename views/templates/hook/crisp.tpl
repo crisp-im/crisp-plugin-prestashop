@@ -1,25 +1,28 @@
 {*
-*  @author  Baptiste Jamin <baptiste@crisp.chat>
-*  @copyright  Crisp IM 2016
-*  @license
-*  @version  Release: $Revision: 0.3.4 $
+*  @author    Crisp IM SAS
+*  @copyright 2024 Crisp IM SAS
+*  @license   All rights reserved to Crisp IM SAS
 *}
 <script type='text/javascript'>
-window.$crisp=[];
-window.CRISP_WEBSITE_ID = "{$crisp_website_id|escape}";
-(function(){
-  d=document;
-  s=d.createElement('script');
-  s.src='https://client.crisp.chat/l.js';
-  s.async=1;
-  d.getElementsByTagName('head')[0].appendChild(s);
+  window.CRISP_PLUGIN_URL = "{$crisp_plugin_url|escape:'htmlall':'UTF-8'}";
+  window.CRISP_WEBSITE_ID = "{$crisp_website_id|escape:'htmlall':'UTF-8'}";
 
-})();
+  if ("{$crisp_chatbox_disabled|escape:'htmlall':'UTF-8'}" !== "1") {
+    if ("{$crisp_customer->isLogged()|escape:'htmlall':'UTF-8'}" === "1") {
+      CRISP_CUSTOMER = {
+        id:  {($crisp_customer->id) ? $crisp_customer->id : 'null'},
+        logged_in: true,
+        full_name: "{$crisp_customer->firstname|escape:'javascript':'UTF-8'} {$crisp_customer->lastname}",
+        email: "{$crisp_customer->email|escape:'javascript':'UTF-8'}"
+      }
+    }
 
-{if $crisp_customer->isLogged() == true}
-	$crisp.push(["set", "user:nickname", "{$crisp_customer->firstname|escape} {$crisp_customer->lastname}"]);
-	$crisp.push(["set", "user:email", "{$crisp_customer->email|escape}"]);
-{/if}
-
+    {if count(json_decode($productsData)) > 0}
+      CRISP_CART = {
+        id: {($cartId) ? $cartId : 'null'},
+        currency_id: {($currencyId) ? $currencyId : 'null'},
+        products: JSON.parse('{$productsData}'.replace(/&quot;/g,'"'))
+      }
+    {/if}
+  }
 </script>
-

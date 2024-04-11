@@ -1,0 +1,30 @@
+services:
+  _defaults:
+    public: true
+
+  ##############
+  # Your Module
+
+  crisp.module:
+    class: crisp
+    factory: ['Module', 'getInstanceByName']
+    arguments:
+      - 'crisp'
+
+  crisp.context:
+    class: Context
+    factory: ['Context', 'getContext']
+
+  #####################
+  # PrestaShop Account
+  crisp.ps_accounts_installer:
+    class: 'PrestaShop\PsAccountsInstaller\Installer\Installer'
+    public: true
+    arguments:
+      - "5.0"
+
+  crisp.ps_accounts_facade:
+    class: 'PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts'
+    public: true
+    arguments:
+      - "@crisp.ps_accounts_installer"

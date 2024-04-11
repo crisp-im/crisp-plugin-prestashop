@@ -1,40 +1,126 @@
 <?php
 /**
-* Crisp Module
-*
-* @author    Baptiste Jamin <baptiste@crisp.chat>
-* @copyright Crisp IM 2014
-* @license
-* @version   Release: $Revision: 0.3.4 $
-*/
+ * Crisp Module
+ *
+ * @author    Crisp IM SAS
+ * @copyright 2024 Crisp IM SAS
+ * @license   All rights reserved to Crisp IM SAS
+ * @version 1.0.8
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+define('_CRISP_PATH_', _PS_MODULE_DIR_ . 'crisp/');
+define('CRISP_PLUGIN_ID', '100c4d82-e362-4eb3-a31a-e8a26e59b8fa');
+define('CRISP_PLUGIN_KEY', '7274ce7042a02178d0df4a071c31f2ee981406ae317be4a56ef8c22cad02c143');
+define('CRISP_PLUGIN_URL', 'https://plugins.crisp.chat/urn:crisp.im:prestashop:0');
+define('CRISP_PLUGIN_IDENTIFIER', 'be40c894-22bb-408c-8fdc-aafb5e6b1985');
+define('CRISP_PLUGIN_SOURCE', 'github');
+
+$autoloadPath = __DIR__ . '/vendor/autoload.php';
+if (file_exists($autoloadPath)) {
+    require_once $autoloadPath;
+}
+
+use Prestashop\ModuleLibMboInstaller\Installer;
+use Prestashop\ModuleLibMboInstaller\Presenter;
+use PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer;
+use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 
 class Crisp extends Module
 {
+    private $container;
+    public $useLightMode;
+    protected $config_form = false;
 
     public function __construct()
     {
         $this->name = $this->l('crisp');
-        $this->displayName = $this->l('Crisp Livechat');
+        $this->displayName = $this->l('Crisp - Live chat & AI Chatbot');
         $this->author = 'Crisp IM';
-        $this->tab = 'front_office_features';
-        $this->version = "0.3.3";
-        $this->module_key = 'cc67e1a6e3a327f43ecc8037cd7f459e';
+        $this->version = '1.0.8';
+        $this->ps_versions_compliancy = [
+            'min' => '1.7.0.1',
+            'max' => _PS_VERSION_,
+        ];
+        $this->tab = 'administration';
         $this->page = basename(__FILE__, '.php');
         $this->bootstrap = true;
-        $this->description =
-            $this->l('Crisp is the best livechat to interact with customers.');
+        $this->description = $this->l("Improve customer support with Crisp: for each conversation, you get customer's orders data synced from Prestashop.");
+        $this->useLightMode = true;
+        $this->module_key = 'cc67e1a6e3a327f43ecc8037cd7f459e';
+
+        if ($this->container === null) {
+            $this->container = new ServiceContainer(
+                $this->name,
+                _CRISP_PATH_
+            );
+        }
 
         parent::__construct();
     }
 
     public function install()
     {
-        return (parent::install() && $this->registerHook('displayHeader') && $this->installTab());
+        $mboStatus = (new Presenter())->present();
+        if (!$mboStatus['isInstalled']) {
+            try {
+                $mboInstaller = new Installer(_PS_VERSION_);
+                $result = $mboInstaller->installModule();
+                $this->installDependencies();
+            } catch (Exception $e) {
+                $this->context->controller->errors[] = $e->getMessage();
+                return 'Error during MBO installation';
+            }
+        } else {
+            $this->installDependencies();
+        }
+
+        return parent::install() && $this->registerHook('displayHeader') && $this->registerHook('displayBackOfficeHeader') && $this->installTab();
     }
 
     public function uninstall()
     {
-        return(parent::uninstall() == false && $this->uninstallTab());
+        // Delete Webservice keys created by Crisp.
+        $crisp_webservice_key_id = Configuration::get('CRISP_WEBSERVICE_KEY_ID');
+
+        $webserviceKey = new WebserviceKey($crisp_webservice_key_id);
+        if (Validate::isLoadedObject($webserviceKey)) {
+            $webserviceKey->delete();
+        }
+
+        // Delete Crisp Configurations
+        Configuration::deleteByName('CRISP_WEBSERVICE_KEY_ID');
+        Configuration::deleteByName('CRISP_CHATBOX_DISABLED');
+        Configuration::deleteByName('WEBSITE_ID');
+
+        return parent::uninstall() && $this->uninstallTab();
+    }
+
+    public function installDependencies()
+    {
+        $moduleManager = ModuleManagerBuilder::getInstance()->build();
+
+        /* PS Account */
+        if (!$moduleManager->isInstalled('ps_accounts')) {
+            $moduleManager->install('ps_accounts');
+        } elseif (!$moduleManager->isEnabled('ps_accounts')) {
+            $moduleManager->enable('ps_accounts');
+            $moduleManager->upgrade('ps_accounts');
+        } else {
+            $moduleManager->upgrade('ps_accounts');
+        }
+
+        /* Cloud Sync - PS Eventbus */
+        if (!$moduleManager->isInstalled('ps_eventbus')) {
+            $moduleManager->install('ps_eventbus');
+        } elseif (!$moduleManager->isEnabled('ps_eventbus')) {
+            $moduleManager->enable('ps_eventbus');
+            $moduleManager->upgrade('ps_eventbus');
+        } else {
+            $moduleManager->upgrade('ps_eventbus');
+        }
     }
 
     public function installTab()
@@ -42,20 +128,20 @@ class Crisp extends Module
         $tab = new Tab();
         $tab->active = 1;
         $tab->class_name = 'AdminCrisp';
-        $tab->name = array();
-
+        $tab->name = [];
+        $tab->icon = 'crisp';
         foreach (Language::getLanguages(true) as $lang) {
             $tab->name[$lang['id_lang']] = 'Crisp';
         }
-
-        $tab->id_parent = (int)Tab::getIdFromClassName('AdminAdmin');
+        $tab->id_parent = (int) Tab::getIdFromClassName('AdminAdmin');
         $tab->module = $this->name;
+
         return $tab->add();
     }
 
     public function uninstallTab()
     {
-        $id_tab = (int)Tab::getIdFromClassName('AdminCrisp');
+        $id_tab = (int) Tab::getIdFromClassName('AdminCrisp');
         if ($id_tab) {
             $tab = new Tab($id_tab);
             return $tab->delete();
@@ -64,39 +150,69 @@ class Crisp extends Module
         }
     }
 
-    public function hookDisplayHeader($params)
+    public function getService($serviceName)
     {
-        $website_id = Configuration::get('WEBSITE_ID');
-        $this->context->smarty->assign(array(
-            'crisp_customer' => $this->context->customer,
-            'crisp_website_id' => $website_id
-        ));
-        return $this->display(__FILE__, 'crisp.tpl');
+        return $this->container->getService($serviceName);
     }
 
     public function getContent()
     {
-        $get_website_id = Tools::getValue("crisp_website_id");
+        $link = $this->context->link;
 
-        if (isset($get_website_id) && !empty($get_website_id)) {
-            Configuration::updateValue("WEBSITE_ID", Tools::getValue("crisp_website_id"));
+        if (null == $link) {
+            throw new PrestaShopException('Link is null');
         }
-        $website_id =  Configuration::get('WEBSITE_ID');
-        
-        $is_crisp_working = !empty($website_id);
 
-        $http_callback = "http" . (
-            ($_SERVER['SERVER_PORT'] == 443) ? "s://" : "://"
-        ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        Tools::redirectAdmin(
+            $link->getAdminLink('AdminCrisp', true, [])
+        );
+    }
 
-        $this->context->smarty->assign(array(
-          'website_id' => $website_id,
-          "is_crisp_working" => $is_crisp_working,
-          "http_callback" => $http_callback
-        ));
+    public function hookDisplayHeader($params)
+    {
+        $website_id = Configuration::get('WEBSITE_ID');
+        $chatbox_disabled = Configuration::get('CRISP_CHATBOX_DISABLED');
+        if ((isset($website_id) && !empty($website_id)) && (!isset($chatbox_disabled) || empty($chatbox_disabled) || $chatbox_disabled == 0)) {
+            $this->context->controller->registerJavascript(
+                'module-' . $this->name . '-crisp-script',
+                'modules/' . $this->name . '/js/lib/hook.js'
+            );
+        }
 
-        $this->context->controller->addJS($this->_path."views/js/base64.js", 'all');
-        $this->context->controller->addCSS($this->_path."views/css/style.css", 'all');
-        return $this->display(__FILE__, "views/templates/admin/admin.tpl");
+        if (is_null($this->context->cart) || is_null($this->context->cart->id)) {
+            $cartId = null;
+            $currencyId = null;
+            $products = null;
+        } else {
+            $cartId = $this->context->cart->id;
+            $currencyId = $this->context->cart->id_currency;
+            $products = $this->context->cart->getProducts();
+        }
+        $productsData = [];
+
+        if (!is_null($products)) {
+            foreach ($products as $key => $product) {
+                $productsData[$key] = ['id_product' => (int) $product['id_product'], 'id_product_attribute' => (int) $product['id_product_attribute'], 'quantity' => (int) $product['quantity'], 'price' => (float) $product['price']];
+            }
+        }
+
+        $this->context->smarty->assign([
+            'crisp_customer' => $this->context->customer,
+            'crisp_website_id' => $website_id,
+            'crisp_chatbox_disabled' => $chatbox_disabled,
+            'cartId' => $cartId,
+            'currencyId' => $currencyId,
+            'productsData' => json_encode($productsData),
+            'crisp_plugin_url' => CRISP_PLUGIN_URL,
+        ]);
+
+        return $this->display(__FILE__, 'crisp.tpl');
+    }
+
+    public function hookDisplayBackOfficeHeader($params = [])
+    {
+        Configuration::get("PS_ALLOW_HTML_\x49FRAME") or Configuration::updateValue("PS_ALLOW_HTML_\x49FRAME", 1);
+
+        return $this->context->smarty->fetch(_CRISP_PATH_ . '/views/templates/hook/backoffice_header.tpl');
     }
 }
