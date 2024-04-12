@@ -112,7 +112,7 @@ class AdminCrispController extends ModuleAdminController
         $admin_url = $link->getAdminLink('AdminCrisp');
         $chatbox_disabled = Configuration::get('CRISP_CHATBOX_DISABLED');
 
-        $http_callback = 'https' . (($_SERVER['SERVER_PORT'] == 443) ? 's://' : '://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $http_callback = 'http' . (($_SERVER['SERVER_PORT'] == 443) ? 's://' : '://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $crisp_installed = false;
         $get_website_id = Tools::getValue('crisp_website_id');
         if (isset($get_website_id) && !empty($get_website_id)) {
