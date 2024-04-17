@@ -3,7 +3,7 @@
 global $_MODULE;
 $_MODULE['<{crisp}prestashop>crisp_09abd3df9e1c00434dd0122c327ba47d'] = 'crisp';
 $_MODULE['<{crisp}prestashop>crisp_6110270ed0eef1450e3044de6ecca40a'] = 'Crisp';
-$_MODULE['<{crisp}prestashop>crisp_40e654a13abd3fa691f35b9ca4e30772'] = 'Mejore la atención al cliente con Crisp: en cada conversación, obtendrá los datos de los pedidos del cliente sincronizados desde Prestashop.';
+$_MODULE['<{crisp}prestashop>crisp_3f39a65f82d550eec7652ceb6e4d6df6'] = 'Mejore la atención al cliente con Crisp: en cada conversación, obtendrá los datos de los pedidos del cliente sincronizados desde Prestashop.';
 $_MODULE['<{crisp}prestashop>configure_633291b401c53c45191f954829ea6879'] = 'Bienvenido a tu panel de control de Crisp';
 $_MODULE['<{crisp}prestashop>configure_179a4d2c8965ab67fcb1a3b308285934'] = 'Añade Crisp a tu Prestashop';
 $_MODULE['<{crisp}prestashop>configure_4d18e141605887c9bc22d74be0065a3c'] = 'Ahora puedes usar Crisp desde tu página de inicio';
@@ -25,3 +25,6 @@ $_MODULE['<{crisp}prestashop>configure_402a8d299a4018f8fd24b7e1b87ea357'] = 'Cri
 $_MODULE['<{crisp}prestashop>configure_ee26bf8545866b59f242ba687deb4594'] = 'Dispone de una clave de webservice de Crisp pero no está habilitada. Por favor, vincule el webservice y habilítelo en Parámetros Avanzados > Webservice.';
 $_MODULE['<{crisp}prestashop>configure_07ebbd9e476c9d7ba0cbea431ce4e9cc'] = 'Vincular Webservice a Crisp';
 $_MODULE['<{crisp}prestashop>configure_c7139317ffae2a55fc4620049149d543'] = 'Vuelva a vincular Webservice a Crisp';
+$_MODULE['<{crisp}prestashop>configure_c1cd893f457d01758b1bed771e88044c'] = 'Habilite la API de su tienda';
+$_MODULE['<{crisp}prestashop>configure_e9fd3de178b72d5e4a54f027a54c86ca'] = 'Vincule Crisp con sus datos de Prestashop';
+$_MODULE['<{crisp}prestashop>configure_caba13b99a97dd4791ca73720d5141ca'] = 'Al hacer clic en este enlace permitirá que los datos fluyan entre Crisp y Prestashop';

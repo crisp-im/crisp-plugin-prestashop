@@ -3,7 +3,7 @@
 global $_MODULE;
 $_MODULE['<{crisp}prestashop>crisp_09abd3df9e1c00434dd0122c327ba47d'] = 'crisp';
 $_MODULE['<{crisp}prestashop>crisp_6110270ed0eef1450e3044de6ecca40a'] = 'Crisp - Live chat & AI Chatbot';
-$_MODULE['<{crisp}prestashop>crisp_40e654a13abd3fa691f35b9ca4e30772'] = 'Améliorez le support client avec Crisp : pour chaque conversation, vous obtenez les données des commandes du client synchronisées avec Prestashop.';
+$_MODULE['<{crisp}prestashop>crisp_3f39a65f82d550eec7652ceb6e4d6df6'] = 'Améliorez le support client avec Crisp : pour chaque conversation, vous obtenez les données des commandes du client synchronisées avec Prestashop.';
 $_MODULE['<{crisp}prestashop>configure_633291b401c53c45191f954829ea6879'] = 'Bienvenue sur votre panneau de configuration Crisp';
 $_MODULE['<{crisp}prestashop>configure_179a4d2c8965ab67fcb1a3b308285934'] = 'Ajouter Crisp à votre Prestashop';
 $_MODULE['<{crisp}prestashop>configure_4d18e141605887c9bc22d74be0065a3c'] = 'Vous pouvez désormais utiliser Crisp depuis votre page d\'accueil';
@@ -25,3 +25,6 @@ $_MODULE['<{crisp}prestashop>configure_402a8d299a4018f8fd24b7e1b87ea357'] = 'Cri
 $_MODULE['<{crisp}prestashop>configure_ee26bf8545866b59f242ba687deb4594'] = 'Vous avez une clé de webservice Crisp mais elle n\'est pas activée. Veuillez lier le webservice et l\'activer dans Paramètres avancés > Webservice.';
 $_MODULE['<{crisp}prestashop>configure_07ebbd9e476c9d7ba0cbea431ce4e9cc'] = 'Lier l\'API à Crisp';
 $_MODULE['<{crisp}prestashop>configure_c7139317ffae2a55fc4620049149d543'] = 'Relier l\'API à Crisp';
+$_MODULE['<{crisp}prestashop>configure_c1cd893f457d01758b1bed771e88044c'] = 'Activez l\'API de votre magasin';
+$_MODULE['<{crisp}prestashop>configure_e9fd3de178b72d5e4a54f027a54c86ca'] = 'Lier Crisp à vos données Prestashop';
+$_MODULE['<{crisp}prestashop>configure_caba13b99a97dd4791ca73720d5141ca'] = 'En cliquant sur ce lien, vous autoriserez la circulation des données entre Crisp et Prestashop.';
