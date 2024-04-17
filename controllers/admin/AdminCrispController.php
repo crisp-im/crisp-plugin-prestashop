@@ -148,6 +148,8 @@ class AdminCrispController extends ModuleAdminController
             }
         }
 
+        $admin_locale = $this->context->language->iso_code;
+
         $website_id = Configuration::get('WEBSITE_ID');
         $is_crisp_working = !empty($website_id);
         $this->context->smarty->assign([
@@ -156,6 +158,7 @@ class AdminCrispController extends ModuleAdminController
             'http_callback' => $http_callback,
             'website_id' => $website_id,
             'admin_url' => $admin_url,
+            'admin_locale' => $admin_locale,
             'chatbox_disabled' => $chatbox_disabled,
             'api_key_disabled' => $api_key_disabled,
             'api_key_invalid' => $api_key_invalid,

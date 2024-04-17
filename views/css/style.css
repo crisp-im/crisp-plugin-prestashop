@@ -88,6 +88,10 @@
   border-top: 1px solid #e8eaeb;
 }
 
+.crisp-option label {
+  max-width: 90%;
+}
+
 .crisp-option:last-child {
   border-bottom: 1px solid #e8eaeb;
   margin-bottom: 8px;

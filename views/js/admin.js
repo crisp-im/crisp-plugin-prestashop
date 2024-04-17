@@ -20,6 +20,43 @@ const AJAX_WEBSERVICE_DISABLE = "&action=toggleDisableWebservice&ajax=true";
 const AJAX_CHATBOX_ENABLE = "&action=enableChatbox&ajax=true";
 const AJAX_CHATBOX_DISABLE = "&action=disableChatbox&ajax=true";
 
+/********************************************************************
+ * Translations
+ *********************************************************************/
+const ERROR_MESSAGES = {
+  WEBSERVICE_GENERIC : {
+    default: "An error occurred when connecting your webservice to Crisp. Please try again.",
+    fr: "Une erreur s'est produite lors de la connexion de votre boutique à Crisp. Veuillez réessayer.",
+    es: "Se ha producido un error al conectar su webservice a Crisp. Inténtelo de nuevo."
+  },
+
+  WEBSERVICE_PLUGIN_URL: {
+    default: "An error occurred when connecting your webservice to Crisp. The Crisp plugin URL is missing. Please try again.",
+    fr: "Une erreur s'est produite lors de la connexion de votre boutique à Crisp. L'URL du plugin Crisp est manquante. Veuillez réessayer.",
+    es: "Se ha producido un error al conectar su servicio web a Crisp. Falta la URL del plugin de Crisp. Vuelva a intentarlo."
+  },
+
+  WEBSERVICE_MISSING_PARAMS: {
+    default: "An error occurred when connecting your webservice to Crisp due to missing parameters. Please try again.",
+    fr: "Une erreur s'est produite lors de la connexion de votre boutique à Crisp en raison de paramètres manquants. Veuillez réessayer.",
+    es: "Se ha producido un error al conectar su servicio web a Crisp debido a la falta de parámetros. Vuelva a intentarlo."
+  },
+
+  WEBSERVICE_UNAUTHORIZED: {
+    default: "An error occurred. The authenticity of the request cannot be validated, please reconnect the module by clicking 'Relink Crisp to Prestashop' and try again.",
+    fr: "Une erreur s'est produite. L'authenticité de la demande ne peut être validée, veuillez reconnecter le module en cliquant sur 'Re-link Crisp to Prestashop' et réessayer.",
+    es: "Se ha producido un error. No se ha podido validar la autenticidad de la solicitud. Vuelva a conectar el módulo haciendo clic en 'Volver a vincular Crisp a Prestashop' e inténtelo de nuevo."
+  }
+}
+
+const SUCCESS_MESSAGES = {
+  WEBSERVICE_GENERIC : {
+    default: "Your stores Webservice is now connected to Crisp.",
+    fr: "Les données de votre boutique sont maintenant connectées à Crisp.",
+    es: "El servicio web de su tienda está ahora conectado a Crisp."
+  },
+}
+
 const store = PetiteVue.reactive({
   psAccountsConnected: false,
   isConnected: false,
@@ -28,6 +65,7 @@ const store = PetiteVue.reactive({
   callbackUrl: "",
   websiteId: "",
   crispInstallLink: CRISP_INSTALL_LINK,
+  adminLocale: "default",
 
   webservice: {
     loading: false,
@@ -79,7 +117,7 @@ const actions = {
       error: function () {
         store.webservice.loading = false;
 
-        actions.__setWebserviceError("An error occurred when connecting your webservice to Crisp. Please try again.");
+        actions.__setWebserviceError(ERROR_MESSAGES.WEBSERVICE_GENERIC);
       },
     });
   },
@@ -93,14 +131,14 @@ const actions = {
     let _token = _params.get("token")
 
     if (CRISP_PLUGIN_URL === "") {
-      actions.__setWebserviceError("An error occurred when connecting your webservice to Crisp. The Crisp plugin URL is missing. Please try again.");
+      actions.__setWebserviceError(ERROR_MESSAGES.WEBSERVICE_PLUGIN_URL);
       actions.__invalidateWebserviceKeys();
 
       return;
     }
 
     if (_token === "" || store.websiteId === "") {
-      actions.__setWebserviceError("An error occurred when connecting your webservice to Crisp due to missing parameters. Please try again.");
+      actions.__setWebserviceError(ERROR_MESSAGES.WEBSERVICE_MISSING_PARAMS);
 
       return;
     }
@@ -113,18 +151,18 @@ const actions = {
       store.webservice.active = true;
 
       if (response.status >= 200 && response.status < 299) {
-        actions.__setWebserviceSuccess("Your stores Webservice is now connected to Crisp.");
+        actions.__setWebserviceSuccess(SUCCESS_MESSAGES.WEBSERVICE_GENERIC);
         actions.__updateWebserviceToggle();
       } else if (response.status === 401) {
-        actions.__setWebserviceError("An error occurred. The authenticity of the request cannot be validated, please reconnect the module by clicking 'Relink Crisp to Prestashop' and try again.");
+        actions.__setWebserviceError(ERROR_MESSAGES.WEBSERVICE_UNAUTHORIZED);
       } else {
-        actions.__setWebserviceError("An error occurred when connecting your webservice to Crisp. Please try again.");
+        actions.__setWebserviceError(ERROR_MESSAGES.WEBSERVICE_GENERIC);
       }
 
     })).catch(() => {
       store.webservice.loading = false;
 
-      actions.__setWebserviceError("An error occurred when connecting your webservice to Crisp. Please try again.");
+      actions.__setWebserviceError(ERROR_MESSAGES.WEBSERVICE_GENERIC);
       actions.__invalidateWebserviceKeys();
     })
   },
@@ -209,7 +247,7 @@ const actions = {
     if (store.webservice.active) {
       _webserviceClassList.add("-checked")
 
-      actions.__setWebserviceSuccess("Your stores Webservice is now connected to Crisp.");
+      actions.__setWebserviceSuccess(SUCCESS_MESSAGES.WEBSERVICE_GENERIC);
     } else {
       _webserviceClassList.remove("-checked")
     }
@@ -217,15 +255,23 @@ const actions = {
 
   /**
    * @private
-   * @param {string} message
+   * @param {object} messages
    * @return {undefined}
    */
-  __setWebserviceError(message) {
+  __setWebserviceError(messages) {
+    // Set default message
+    let _message = messages.default;
+
     // Reset success message
     store.webservice.success = "";
 
+    // Use store language
+    if (messages[store.adminLocale]) {
+      _message = messages[store.adminLocale]
+    }
+
     // Set error message
-    store.webservice.error = message;
+    store.webservice.error = _message;
 
     // Message set stop loading
     store.webservice.loading = false;
@@ -233,15 +279,28 @@ const actions = {
 
   /**
    * @private
-   * @param {string} message
+   * @param {object} messages
    * @return {undefined}
    */
-  __setWebserviceSuccess(message) {
+  __setWebserviceSuccess(messages) {
+    console.log(messages)
+    console.log(messages.default)
+    console.log(store.adminLocale)
+    console.log(messages[store.adminLocale])
+
+    // Set default message
+    let _message = messages.default;
+
     // Reset error message
     store.webservice.error = "";
 
+    // Use store language
+    if (messages[store.adminLocale]) {
+      _message = messages[store.adminLocale]
+    }
+
     // Set success message
-    store.webservice.success = message;
+    store.webservice.success = _message;
 
     // Message set stop loading
     store.webservice.loading = false;
@@ -274,6 +333,7 @@ function InitPreferences() {
   store.websiteId = WEBSITE_ID;
   store.callbackUrl = CALLBACK_URL;
   store.adminUrl = ADMIN_URL;
+  store.adminLocale = ADMIN_LOCALE;
   store.webservice.key = API_KEY;
 
   if (CRISP_PLUGIN_ID !== "") {
@@ -313,7 +373,7 @@ function InitPreferences() {
     store.webservice.enabled = true;
 
     if (store.webservice.active) {
-      actions.__setWebserviceSuccess("Your stores Webservice is connected to Crisp.");
+      actions.__setWebserviceSuccess(SUCCESS_MESSAGES.WEBSERVICE_GENERIC);
     }
   }
 

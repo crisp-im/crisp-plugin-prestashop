@@ -22,12 +22,13 @@
   const WEBSERVICE_KEY_ID = "{$crisp_webservice_key_id|escape:'javascript':'UTF-8'}";
   const CALLBACK_URL = "{$http_callback|escape:'javascript':'UTF-8'}";
   const ADMIN_URL = "{$admin_url|escape:'javascript':'UTF-8'}";
+  const ADMIN_LOCALE = "{$admin_locale|escape:'javascript':'UTF-8'}";
   const CHATBOX_DISABLED = "{$chatbox_disabled|escape:'javascript':'UTF-8'}";
   const API_KEY_DISABLED = "{$api_key_disabled|escape:'javascript':'UTF-8'}";
   const API_KEY_INVALID = "{$api_key_invalid|escape:'javascript':'UTF-8'}";
 </script>
 
-<div id="app" v-scope="InitPreferences(API_KEY, WEBSITE_ID, IS_CONNECTED, WEBSERVICE_KEY_ID, CALLBACK_URL, ADMIN_URL, CHATBOX_DISABLED, API_KEY_DISABLED)" @vue:mounted="mounted" class="container">
+<div id="app" v-scope="InitPreferences(API_KEY, WEBSITE_ID, IS_CONNECTED, WEBSERVICE_KEY_ID, CALLBACK_URL, ADMIN_URL, ADMIN_LOCALE, CHATBOX_DISABLED, API_KEY_DISABLED)" @vue:mounted="mounted" class="container">
   <div>
     <h1 class="mb-3">
       <img id="logo" src="{$logo|escape:'javascript':'UTF-8'}">
@@ -49,7 +50,7 @@
       <div class="col-12 p-0">
         <div v-if="!store.psAccountsConnected" class="alert alert-warning" role="alert">
           <p class="alert-text">
-            Please associate your Prestashop account with this module before continuing.
+            {l s='Please associate your Prestashop account with this module before continuing.' mod='crisp'}
           </p>
         </div>
 
@@ -59,7 +60,7 @@
               <div class="crisp-modal">
                 <div class="crisp-title">{l s='Configure Crisp for your Prestashop Store' mod='crisp'}</div>
                 {if $crisp_installed == true}
-                  <p class="alert alert-success">{l s='Crisp has been successfully linked with your Prestashop data' mod='crisp'}</p>
+                  <p class="alert alert-success">{l s='Crisp has been successfully linked with your Prestashop data.' mod='crisp'}</p>
                 {/if}
                 <div id="installcrisp" class="d-flex flex-column">
                   <a class="crisp-button crisp u-mb20" href="https://app.crisp.chat/website/{$website_id|escape:'htmlall':'UTF-8'}/inbox" target="_blank">💬 {l s='Open Crisp inbox' mod='crisp'}</a>
@@ -79,13 +80,13 @@
                     <div v-else>
                       <div v-if="store.webservice.success !== ''" class="alert alert-success" role="alert">
                         <p class="alert-text">
-                          [[store.webservice.success]]
+                          {l s='[[store.webservice.success]]' mod='crisp'}
                         </p>
                       </div>
 
                       <div v-if="store.webservice.error !== ''" class="alert alert-danger" role="alert">
                         <p class="alert-text">
-                          [[store.webservice.error]]
+                          {l s='[[store.webservice.error]]' mod='crisp'}
                         </p>
                       </div>
 
@@ -99,7 +100,7 @@
 
                         <div v-else-if="store.webservice.error === ''" class="alert alert-warning" role="alert">
                           <p class="alert-text">
-                            Prestashop data is now syncing with Crisp through Cloudsync. Enable your stores webservice in order to view customers' data from Crisp.
+                            {l s='Prestashop data is now syncing with Crisp through Cloudsync. Enable your stores webservice in order to view customers\' data from Crisp.' mod='crisp'}
                           </p>
                         </div>
                       </div>
@@ -111,14 +112,14 @@
 
                     <div class="crisp-option">
                       <label for="crisp-chatbox">
-                        Include Crisp Chatbox on storefront. <span class="crisp-label-subdued"> Enabed this option to show the Chatbox on you store.</span>
+                        {l s='Include Crisp Chatbox on storefront.' mod='crisp'} <span class="crisp-label-subdued"> {l s='Enable this option to show the Chatbox on you store.' mod='crisp'}</span>
                       </label>
                       <input v-model="store.chatboxEnabled" onchange="actions.toggleChatbox()" data-toggle="switch" class="switch-input-lg" id="crisp-chatbox" data-inverse="true" type="checkbox" name="switch[]" ref="chatboxToggle" />
                     </div>
 
                     <div class="crisp-option">
                       <label for="crisp-chatbox">
-                        Use stores webservice. <span class="crisp-label-subdued"> Enable this option to allow Crisp to use the stores webservice in order to find customers and their order details.</span>
+                        {l s='Use stores webservice.' mod='crisp'} <span class="crisp-label-subdued"> {l s='Enable this option to allow Crisp to use the stores webservice in order to find customers and their order details.' mod='crisp'}</span>
                       </label>
                       <input v-model="store.webservice.active" onchange="actions.toggleWebservice()" data-toggle="switch" class="switch-input-lg" id="crisp-chatbox" data-inverse="true" type="checkbox" name="switch[]" ref="webserviceToggle" />
                     </div>
