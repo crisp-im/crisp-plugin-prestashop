@@ -26,6 +26,10 @@
   const CHATBOX_DISABLED = "{$chatbox_disabled|escape:'javascript':'UTF-8'}";
   const API_KEY_DISABLED = "{$api_key_disabled|escape:'javascript':'UTF-8'}";
   const API_KEY_INVALID = "{$api_key_invalid|escape:'javascript':'UTF-8'}";
+  const SHOP_NAME = "{$shop_name|escape:'javascript':'UTF-8'}";
+  const SHOP_DOMAIN = "{$shop_domain|escape:'javascript':'UTF-8'}";
+  const USER_EMAIL = "{$user_email|escape:'javascript':'UTF-8'}";
+  const USER_NAME = "{$user_name|escape:'javascript':'UTF-8'}";
 </script>
 
 <div id="app" v-scope="InitPreferences(API_KEY, WEBSITE_ID, IS_CONNECTED, WEBSERVICE_KEY_ID, CALLBACK_URL, ADMIN_URL, ADMIN_LOCALE, CHATBOX_DISABLED, API_KEY_DISABLED)" @vue:mounted="mounted" class="container">

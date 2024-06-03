@@ -150,6 +150,18 @@ class AdminCrispController extends ModuleAdminController
 
         $admin_locale = $this->context->language->iso_code;
 
+        $context = Context::getContext();
+        $shop = $context->shop;
+        $shopName = Configuration::get('PS_SHOP_NAME');
+        $shopDomain = $shop->domain;
+        $adminEmail = '';
+        $adminUsername = '';
+
+        if (isset($context->employee) && $context->employee->id) {
+            $adminUsername = $context->employee->firstname . ' ' . $context->employee->lastname;
+            $adminEmail = $context->employee->email;
+        }
+
         $website_id = Configuration::get('WEBSITE_ID');
         $is_crisp_working = !empty($website_id);
         $this->context->smarty->assign([
@@ -168,7 +180,12 @@ class AdminCrispController extends ModuleAdminController
             'crisp_plugin_url' => CRISP_PLUGIN_URL,
             'crisp_plugin_source' => CRISP_PLUGIN_SOURCE,
             'logo' => '/modules/crisp/logo.png',
+            'shop_name' => $shopName,
+            'shop_domain' => $shopDomain,
+            'user_email' => $adminEmail,
+            'user_name' => $adminUsername,
         ]);
+
         $this->context->controller->addCSS(_PS_MODULE_DIR_ . 'crisp/views/css/style.css', 'all');
         $this->context->controller->addCSS('https://ui-kit.prestashop.com/backoffice/latest/css/bootstrap-prestashop-ui-kit.css', 'all');
         $this->context->controller->addJS('https://ui-kit.prestashop.com/backoffice/latest/js/prestashop-ui-kit.js', 'all');

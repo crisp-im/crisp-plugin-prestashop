@@ -93,9 +93,26 @@ const actions = {
     var _redirectURL = btoa(store.callbackUrl);
     var _shopID = contextPsAccounts.currentShop.uuid;
     var _payload = "redirect=" + _redirectURL + "&shop_id=" + _shopID + "&plugin_source=" + CRISP_PLUGIN_SOURCE;
-    var add_to_crisp_link = store.crispInstallLink;
+    var add_to_crisp_link = store.crispInstallLink + btoa(_payload);
 
-    add_to_crisp_link += btoa(_payload);
+    if (SHOP_NAME !== "") {
+      add_to_crisp_link += "&website_name=" + SHOP_NAME;
+    }
+
+    if (SHOP_DOMAIN !== "") {
+      add_to_crisp_link += "&website_domain=" + SHOP_DOMAIN;
+    } else {
+      add_to_crisp_link += "&website_domain=" + window.location.host;
+    }
+
+    if (USER_EMAIL !== "") {
+      add_to_crisp_link += "&user_email=" + USER_EMAIL;
+    }
+
+    if (USER_NAME !== "") {
+      add_to_crisp_link += "&user_name=" + USER_NAME;
+    }
+
     window.open(add_to_crisp_link, "_self");
   },
 
