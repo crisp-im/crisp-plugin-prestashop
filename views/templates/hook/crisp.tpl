@@ -13,7 +13,9 @@
         id:  {($crisp_customer->id) ? $crisp_customer->id : 'null'},
         logged_in: true,
         full_name: "{$crisp_customer->firstname|escape:'javascript':'UTF-8'} {$crisp_customer->lastname}",
-        email: "{$crisp_customer->email|escape:'javascript':'UTF-8'}"
+        email: "{$crisp_customer->email|escape:'javascript':'UTF-8'}",
+        address: "{$crisp_customer_address|escape:'javascript':'UTF-8'}",
+        phone: "{$crisp_customer_phone|escape:'javascript':'UTF-8'}",
       }
     }
 

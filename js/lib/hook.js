@@ -89,7 +89,8 @@ window.CRISP_READY_TRIGGER = async function() {
 
     $crisp.push(["set", "user:nickname", CRISP_CUSTOMER.full_name]);
     $crisp.push(["set", "user:email", CRISP_CUSTOMER.email]);
-    $crisp.push(["set", "session:data", [[["prestashop_customer_id", CRISP_CUSTOMER.id]]]]);
+    $crisp.push(["set", "user:phone", CRISP_CUSTOMER.phone]);
+    $crisp.push(["set", "session:data", [[["prestashop_customer_id", CRISP_CUSTOMER.id], ["prestashop_address", CRISP_CUSTOMER.address]]]])
 
     fetch(window.CRISP_PLUGIN_URL+"/visitors/website/"+website_id+"/session/"+identifier+"/customer", {
       method: "POST",

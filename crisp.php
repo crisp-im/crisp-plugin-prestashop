@@ -5,7 +5,7 @@
  * @author    Crisp IM SAS
  * @copyright 2024 Crisp IM SAS
  * @license   All rights reserved to Crisp IM SAS
- * @version 1.1.0
+ * @version 1.1.1
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -39,7 +39,7 @@ class Crisp extends Module
         $this->name = $this->l('crisp');
         $this->displayName = $this->l('Crisp - Live chat & AI Chatbot');
         $this->author = 'Crisp IM';
-        $this->version = '1.1.0';
+        $this->version = '1.1.1';
         $this->ps_versions_compliancy = [
             'min' => '1.7.0.1',
             'max' => _PS_VERSION_,
@@ -196,8 +196,22 @@ class Crisp extends Module
             }
         }
 
+        $customer = $this->context->customer;
+        $customerAddress = '';
+        $customerPhone = '';
+        if ($customer->isLogged()) {
+            $addresses = $customer->getAddresses($this->context->language->id);
+            if (!empty($addresses)) {
+                $address = $addresses[0];
+                $customerAddress = $address['address1'] . ' ' . $address['address2'] . ', ' . $address['postcode'] . ' ' . $address['city'] . ', ' . $address['country'];
+                $customerPhone = $address['phone'];
+            }
+        }
+
         $this->context->smarty->assign([
-            'crisp_customer' => $this->context->customer,
+            'crisp_customer' => $customer,
+            'crisp_customer_address' => $customerAddress,
+            'crisp_customer_phone' => $customerPhone,
             'crisp_website_id' => $website_id,
             'crisp_chatbox_disabled' => $chatbox_disabled,
             'cartId' => $cartId,
