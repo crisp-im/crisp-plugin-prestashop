@@ -36,7 +36,7 @@ class Crisp extends Module
 
     public function __construct()
     {
-        $this->name = $this->l('crisp');
+        $this->name = 'crisp';
         $this->displayName = $this->l('Crisp - Live chat & AI Chatbot');
         $this->author = 'Crisp IM';
         $this->version = '1.1.1';
