@@ -73,6 +73,7 @@ class AdminCrispController extends ModuleAdminController
         $permissions = [
             'customers' => ['GET' => 1],
             'orders' => ['GET' => 1],
+            'order_details' => ['GET' => 1],
             'carriers' => ['GET' => 1],
             'carts' => ['GET' => 1],
             'currencies' => ['GET' => 1],
