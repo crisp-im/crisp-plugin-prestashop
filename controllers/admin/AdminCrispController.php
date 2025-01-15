@@ -141,7 +141,7 @@ class AdminCrispController extends ModuleAdminController
             }
         }
 
-        if (isset($crisp_webservice_key_id) && !empty($crisp_webservice_key_id)) {
+        if (!empty($crisp_webservice_key_id)) {
             $webserviceKey = new WebserviceKey($crisp_webservice_key_id);
 
             if (Validate::isLoadedObject($webserviceKey) && !$webserviceKey->active) {

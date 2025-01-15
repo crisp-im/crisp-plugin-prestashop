@@ -5,7 +5,7 @@
  * @author    Crisp IM SAS
  * @copyright 2024 Crisp IM SAS
  * @license   All rights reserved to Crisp IM SAS
- * @version 1.1.2
+ * @version 1.1.3
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -32,6 +32,7 @@ class Crisp extends Module
 {
     private $container;
     public $useLightMode;
+    public $page;
     protected $config_form = false;
 
     public function __construct()
@@ -39,7 +40,7 @@ class Crisp extends Module
         $this->name = $this->l('crisp');
         $this->displayName = $this->l('Crisp - Live chat & AI Chatbot');
         $this->author = 'Crisp IM';
-        $this->version = '1.1.2';
+        $this->version = '1.1.3';
         $this->ps_versions_compliancy = [
             'min' => '1.7.0.1',
             'max' => _PS_VERSION_,
@@ -107,9 +108,6 @@ class Crisp extends Module
             $moduleManager->install('ps_accounts');
         } elseif (!$moduleManager->isEnabled('ps_accounts')) {
             $moduleManager->enable('ps_accounts');
-            $moduleManager->upgrade('ps_accounts');
-        } else {
-            $moduleManager->upgrade('ps_accounts');
         }
 
         /* Cloud Sync - PS Eventbus */
@@ -117,9 +115,6 @@ class Crisp extends Module
             $moduleManager->install('ps_eventbus');
         } elseif (!$moduleManager->isEnabled('ps_eventbus')) {
             $moduleManager->enable('ps_eventbus');
-            $moduleManager->upgrade('ps_eventbus');
-        } else {
-            $moduleManager->upgrade('ps_eventbus');
         }
     }
 
@@ -172,7 +167,8 @@ class Crisp extends Module
     {
         $website_id = Configuration::get('WEBSITE_ID');
         $chatbox_disabled = Configuration::get('CRISP_CHATBOX_DISABLED');
-        if ((isset($website_id) && !empty($website_id)) && (!isset($chatbox_disabled) || empty($chatbox_disabled) || $chatbox_disabled == 0)) {
+
+        if ($website_id && !$chatbox_disabled) {
             $this->context->controller->registerJavascript(
                 'module-' . $this->name . '-crisp-script',
                 'modules/' . $this->name . '/js/lib/hook.js'

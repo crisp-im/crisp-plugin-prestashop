@@ -74,7 +74,7 @@ function postCrispCartData(cart) {
 window.CRISP_READY_TRIGGER = async function() {
   // Set session segment (only after first message is sent)
   $crisp.push(["on", "message:sent", () => {
-    $crisp.push(["set", "session:segments", [["prestashop"]]]);
+    $crisp.push(["set", "session:segments", [["prestashop", "chat"]]]);
     $crisp.push(["off", "message:sent"]);
   }])
 
