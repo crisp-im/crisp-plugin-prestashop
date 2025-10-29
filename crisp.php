@@ -5,7 +5,7 @@
  * @author    Crisp IM SAS
  * @copyright 2024 Crisp IM SAS
  * @license   All rights reserved to Crisp IM SAS
- * @version 1.1.3
+ * @version 1.1.4
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -40,7 +40,7 @@ class Crisp extends Module
         $this->name = $this->l('crisp');
         $this->displayName = $this->l('Crisp - Live chat & AI Chatbot');
         $this->author = 'Crisp IM';
-        $this->version = '1.1.3';
+        $this->version = '1.1.4';
         $this->ps_versions_compliancy = [
             'min' => '1.7.0.1',
             'max' => _PS_VERSION_,

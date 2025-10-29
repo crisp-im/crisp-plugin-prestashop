@@ -190,7 +190,7 @@ class AdminCrispController extends ModuleAdminController
         $this->context->controller->addCSS(_PS_MODULE_DIR_ . 'crisp/views/css/style.css', 'all');
         $this->context->controller->addCSS('https://ui-kit.prestashop.com/backoffice/latest/css/bootstrap-prestashop-ui-kit.css', 'all');
         $this->context->controller->addJS('https://ui-kit.prestashop.com/backoffice/latest/js/prestashop-ui-kit.js', 'all');
-        $this->context->controller->addJS('https://unpkg.com/petite-vue', 'all');
+        $this->context->controller->addJS(_PS_MODULE_DIR_ . 'crisp/views/js/petite-vue.js', 'all');
         $this->context->controller->addJS(_PS_MODULE_DIR_ . 'crisp/views/js/admin.js', 'all');
         $moduleManager = ModuleManagerBuilder::getInstance()->build();
         $accountsService = null;
