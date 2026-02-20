@@ -1,28 +1,27 @@
 {
-    "name": "prestashop/crisp",
-    "description": "",
-    "config": {
-      "preferred-install": "dist",
-      "optimize-autoloader": true,
-      "prepend-autoloader": false,
-      "platform": {
-          "php": "7.1"
-      }
-    },
-    "require-dev": {
-      "prestashop/php-dev-tools": "^3.2.1"
-    },
-    "require": {
-      "php": ">=5.6",
-      "prestashop/prestashop-accounts-installer": "^1.0",
-      "prestashop/module-lib-service-container": "^1.4",
-      "prestashop/module-lib-mbo-installer": "^1.0"
-    },
-    "autoload": {
-      "classmap": [
-        "crisp.php"
-      ]
-    },
-    "author": "PrestaShop",
-    "license": "MIT"
-  }
+  "name": "prestashop/crisp",
+  "description": "",
+  "config": {
+    "preferred-install": "dist",
+    "optimize-autoloader": true,
+    "prepend-autoloader": false,
+    "platform": {
+        "php": "8.1"
+    }
+  },
+  "require-dev": {
+    "prestashop/php-dev-tools": "^4.0 || ^5.0"
+  },
+  "require": {
+    "php": ">=8.1",
+    "prestashop/module-lib-service-container": "^2.0",
+    "prestashop/module-lib-mbo-installer": "^3.0"
+  },
+  "autoload": {
+    "classmap": [
+      "crisp.php"
+    ]
+  },
+  "author": "PrestaShop",
+  "license": "MIT"
+}

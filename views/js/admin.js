@@ -13,7 +13,7 @@
  */
 
 const CRISP_PLUGIN_DEFAULT_ID = "be40c894-22bb-408c-8fdc-aafb5e6b1985"
-const CRISP_INSTALL_LINK = "https://app.crisp.chat/initiate/plugin/"
+const CRISP_DEFAULT_INSTALL_LINK = "https://app.crisp.chat/initiate/plugin/"
 const AJAX_WEBSERVICE = "&action=enableWebService&ajax=true";
 const AJAX_WEBSERVICE_ENABLE = "&action=toggleEnableWebservice&ajax=true";
 const AJAX_WEBSERVICE_DISABLE = "&action=toggleDisableWebservice&ajax=true";
@@ -64,7 +64,7 @@ const store = PetiteVue.reactive({
   adminUrl: "",
   callbackUrl: "",
   websiteId: "",
-  crispInstallLink: CRISP_INSTALL_LINK,
+  crispInstallLink: CRISP_DEFAULT_INSTALL_LINK,
   adminLocale: "default",
 
   webservice: {
@@ -352,6 +352,10 @@ function InitPreferences() {
   store.adminUrl = ADMIN_URL;
   store.adminLocale = ADMIN_LOCALE;
   store.webservice.key = API_KEY;
+
+  if (CRISP_APP_URL !== "") {
+    store.crispInstallLink = CRISP_APP_URL + "/initiate/plugin/";
+  }
 
   if (CRISP_PLUGIN_ID !== "") {
     store.crispInstallLink += CRISP_PLUGIN_ID + "?payload=";

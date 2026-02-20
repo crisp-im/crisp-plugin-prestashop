@@ -3,9 +3,9 @@
  * Crisp Module
  *
  * @author    Crisp IM SAS
- * @copyright 2024 Crisp IM SAS
+ * @copyright 2026 Crisp IM SAS
  * @license   All rights reserved to Crisp IM SAS
- * @version 1.1.4
+ * @version 1.2.0
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -14,6 +14,7 @@ if (!defined('_PS_VERSION_')) {
 define('_CRISP_PATH_', _PS_MODULE_DIR_ . 'crisp/');
 define('CRISP_PLUGIN_ID', '100c4d82-e362-4eb3-a31a-e8a26e59b8fa');
 define('CRISP_PLUGIN_KEY', '7274ce7042a02178d0df4a071c31f2ee981406ae317be4a56ef8c22cad02c143');
+define('CRISP_APP_URL', 'https://app.crisp.chat');
 define('CRISP_PLUGIN_URL', 'https://plugins.crisp.chat/urn:crisp.im:prestashop:0');
 define('CRISP_PLUGIN_IDENTIFIER', 'be40c894-22bb-408c-8fdc-aafb5e6b1985');
 define('CRISP_PLUGIN_SOURCE', 'github');
@@ -37,20 +38,24 @@ class Crisp extends Module
 
     public function __construct()
     {
-        $this->name = $this->l('crisp');
-        $this->displayName = $this->l('Crisp - Live chat & AI Chatbot');
+        $this->name = 'crisp';
+        $this->tab = 'administration';
         $this->author = 'Crisp IM';
-        $this->version = '1.1.4';
+        $this->version = '1.2.0';
         $this->ps_versions_compliancy = [
-            'min' => '1.7.0.1',
+            'min' => '8.0.0',
             'max' => _PS_VERSION_,
         ];
-        $this->tab = 'administration';
         $this->page = basename(__FILE__, '.php');
         $this->bootstrap = true;
-        $this->description = $this->l("Improve customer support with Crisp: for each conversation, you get customer's orders data synced from Prestashop.");
+        $this->need_instance = 1;
         $this->useLightMode = true;
         $this->module_key = 'cc67e1a6e3a327f43ecc8037cd7f459e';
+
+        parent::__construct();
+
+        $this->displayName = $this->l('Crisp - Live chat & AI Chatbot');
+        $this->description = $this->l("Improve customer support with Crisp: for each conversation, you get customer's orders data synced from Prestashop.");
 
         if ($this->container === null) {
             $this->container = new ServiceContainer(
@@ -58,8 +63,6 @@ class Crisp extends Module
                 _CRISP_PATH_
             );
         }
-
-        parent::__construct();
     }
 
     public function install()
@@ -86,9 +89,11 @@ class Crisp extends Module
         // Delete Webservice keys created by Crisp.
         $crisp_webservice_key_id = Configuration::get('CRISP_WEBSERVICE_KEY_ID');
 
-        $webserviceKey = new WebserviceKey($crisp_webservice_key_id);
-        if (Validate::isLoadedObject($webserviceKey)) {
-            $webserviceKey->delete();
+        if ($crisp_webservice_key_id) {
+            $webserviceKey = new WebserviceKey((int) $crisp_webservice_key_id);
+            if (Validate::isLoadedObject($webserviceKey)) {
+                $webserviceKey->delete();
+            }
         }
 
         // Delete Crisp Configurations
@@ -121,10 +126,10 @@ class Crisp extends Module
     public function installTab()
     {
         $tab = new Tab();
-        $tab->active = 1;
+        $tab->active = true;
         $tab->class_name = 'AdminCrisp';
         $tab->name = [];
-        $tab->icon = 'crisp';
+        $tab->icon = 'chat';
         foreach (Language::getLanguages(true) as $lang) {
             $tab->name[$lang['id_lang']] = 'Crisp';
         }
@@ -136,13 +141,15 @@ class Crisp extends Module
 
     public function uninstallTab()
     {
-        $id_tab = (int) Tab::getIdFromClassName('AdminCrisp');
+        $id_tab = (int) Db::getInstance()->getValue(
+            'SELECT id_tab FROM ' . _DB_PREFIX_ . 'tab WHERE class_name = "AdminCrisp"'
+        );
         if ($id_tab) {
             $tab = new Tab($id_tab);
             return $tab->delete();
-        } else {
-            return false;
         }
+
+        return true;
     }
 
     public function getService($serviceName)
