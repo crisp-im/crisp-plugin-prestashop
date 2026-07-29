@@ -342,6 +342,39 @@ const actions = {
   },
 };
 
+function initializePrestaShopComponents() {
+  if (typeof window.psaccountsVue !== "undefined" && window.psaccountsVue) {
+    try {
+      window.psaccountsVue.init();
+      store.psAccountsConnected = window.psaccountsVue.isOnboardingCompleted() === true;
+
+      if (!store.psAccountsConnected) {
+        const crispElement = document.getElementById("crisp");
+        const installElement = document.getElementById("installcrisp");
+
+        if (crispElement) crispElement.style.opacity = "0.5";
+        if (installElement) installElement.style.display = "none";
+      }
+    } catch (error) {
+      console.error("PS Accounts initialization error:", error);
+    }
+  }
+
+  const cloudSyncAnchor = document.querySelector("#prestashop-cloudsync");
+
+  if (
+    cloudSyncAnchor &&
+    typeof window.cloudSyncSharingConsent !== "undefined" &&
+    window.cloudSyncSharingConsent
+  ) {
+    try {
+      window.cloudSyncSharingConsent.init("#prestashop-cloudsync");
+    } catch (error) {
+      console.error("CloudSync initialization error:", error);
+    }
+  }
+}
+
 /**
  * Loads preferences into store
  * @returns {object}  empty object
@@ -401,6 +434,7 @@ function InitPreferences() {
   return {
     mounted() {
       store.$refs = this.$refs;
+      initializePrestaShopComponents();
     }
   };
 }
@@ -410,5 +444,5 @@ document.addEventListener("DOMContentLoaded", () => {
     store,
     actions,
     $delimiters: ["[[", "]]"],
-  }).mount("#app");
+  }).mount("#crisp-app");
 });

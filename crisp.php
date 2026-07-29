@@ -5,7 +5,7 @@
  * @author    Crisp IM SAS
  * @copyright 2026 Crisp IM SAS
  * @license   All rights reserved to Crisp IM SAS
- * @version 1.2.0
+ * @version 1.2.3
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -41,7 +41,7 @@ class Crisp extends Module
         $this->name = 'crisp';
         $this->tab = 'administration';
         $this->author = 'Crisp IM';
-        $this->version = '1.2.0';
+        $this->version = '1.2.3';
         $this->ps_versions_compliancy = [
             'min' => '8.0.0',
             'max' => _PS_VERSION_,
@@ -175,52 +175,24 @@ class Crisp extends Module
         $website_id = Configuration::get('WEBSITE_ID');
         $chatbox_disabled = Configuration::get('CRISP_CHATBOX_DISABLED');
 
-        if ($website_id && !$chatbox_disabled) {
-            $this->context->controller->registerJavascript(
-                'module-' . $this->name . '-crisp-script',
-                'modules/' . $this->name . '/js/lib/hook.js'
-            );
+        if (!$website_id || $chatbox_disabled) {
+            return '';
         }
 
-        if (is_null($this->context->cart) || is_null($this->context->cart->id)) {
-            $cartId = null;
-            $currencyId = null;
-            $products = null;
-        } else {
-            $cartId = $this->context->cart->id;
-            $currencyId = $this->context->cart->id_currency;
-            $products = $this->context->cart->getProducts();
-        }
-        $productsData = [];
-
-        if (!is_null($products)) {
-            foreach ($products as $key => $product) {
-                $productsData[$key] = ['id_product' => (int) $product['id_product'], 'id_product_attribute' => (int) $product['id_product_attribute'], 'quantity' => (int) $product['quantity'], 'price' => (float) $product['price']];
-            }
-        }
-
-        $customer = $this->context->customer;
-        $customerAddress = '';
-        $customerPhone = '';
-        if ($customer->isLogged()) {
-            $addresses = $customer->getAddresses($this->context->language->id);
-            if (!empty($addresses)) {
-                $address = $addresses[0];
-                $customerAddress = $address['address1'] . ' ' . $address['address2'] . ', ' . $address['postcode'] . ' ' . $address['city'] . ', ' . $address['country'];
-                $customerPhone = $address['phone'];
-            }
-        }
+        $this->context->controller->registerJavascript(
+            'module-' . $this->name . '-crisp-script',
+            'modules/' . $this->name . '/js/lib/hook.js'
+        );
 
         $this->context->smarty->assign([
-            'crisp_customer' => $customer,
-            'crisp_customer_address' => $customerAddress,
-            'crisp_customer_phone' => $customerPhone,
             'crisp_website_id' => $website_id,
-            'crisp_chatbox_disabled' => $chatbox_disabled,
-            'cartId' => $cartId,
-            'currencyId' => $currencyId,
-            'productsData' => json_encode($productsData),
             'crisp_plugin_url' => CRISP_PLUGIN_URL,
+            'crisp_context_url' => $this->context->link->getModuleLink(
+                $this->name,
+                'context',
+                ['ajax' => 1],
+                true
+            ),
         ]);
 
         return $this->display(__FILE__, 'crisp.tpl');

@@ -78,6 +78,8 @@ class AdminCrispController extends ModuleAdminController
             'customers' => ['GET' => 1],
             'orders' => ['GET' => 1],
             'order_details' => ['GET' => 1],
+            'order_carriers' => ['GET' => 1],
+            'order_states' => ['GET' => 1],
             'carriers' => ['GET' => 1],
             'carts' => ['GET' => 1],
             'currencies' => ['GET' => 1],
@@ -221,7 +223,7 @@ class AdminCrispController extends ModuleAdminController
                         ]);
                         $urlAccountsCdn = $accountsService->getAccountsCdn();
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $this->context->controller->errors[] = 'PS Accounts: ' . $e->getMessage();
                 }
             }
@@ -249,7 +251,7 @@ class AdminCrispController extends ModuleAdminController
                                 'contextPsEventbus' => $eventbusPresenterService->expose($this->module, $eventbusScope),
                             ]);
                         }
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         $this->context->controller->errors[] = $e->getMessage();
                     }
                 }

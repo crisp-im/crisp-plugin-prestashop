@@ -33,7 +33,7 @@
   const USER_NAME = "{$user_name|escape:'javascript':'UTF-8'}";
 </script>
 
-<div id="app" v-scope="InitPreferences(API_KEY, WEBSITE_ID, IS_CONNECTED, WEBSERVICE_KEY_ID, CALLBACK_URL, ADMIN_URL, ADMIN_LOCALE, CHATBOX_DISABLED, API_KEY_DISABLED)" @vue:mounted="mounted" class="container">
+<div id="crisp-app" v-scope="InitPreferences(API_KEY, WEBSITE_ID, IS_CONNECTED, WEBSERVICE_KEY_ID, CALLBACK_URL, ADMIN_URL, ADMIN_LOCALE, CHATBOX_DISABLED, API_KEY_DISABLED)" @vue:mounted="mounted" class="container">
   <div>
     <h1 class="mb-3">
       <img id="logo" src="{$logo|escape:'javascript':'UTF-8'}">
@@ -68,8 +68,8 @@
                   <p class="alert alert-success">{l s='Crisp has been successfully linked with your Prestashop data.' mod='crisp'}</p>
                 {/if}
                 <div id="installcrisp" class="d-flex flex-column">
-                  <a class="crisp-button crisp u-mb20" href="{$crisp_app_url}/website/{$website_id|escape:'htmlall':'UTF-8'}/inbox" target="_blank">💬 {l s='Open Crisp inbox' mod='crisp'}</a>
-                  <a class="crisp-button crisp-neutral u-mb20" href="{$crisp_app_url}/settings/website/{$website_id|escape:'htmlall':'UTF-8'}" target="_blank">⚙️ {l s='Go to my Crisp settings' mod='crisp'}</a>
+                  <a class="crisp-button crisp u-mb20" href="{$crisp_app_url|escape:'htmlall':'UTF-8'}/website/{$website_id|escape:'htmlall':'UTF-8'}/inbox" target="_blank">💬 {l s='Open Crisp inbox' mod='crisp'}</a>
+                  <a class="crisp-button crisp-neutral u-mb20" href="{$crisp_app_url|escape:'htmlall':'UTF-8'}/settings/website/{$website_id|escape:'htmlall':'UTF-8'}" target="_blank">⚙️ {l s='Go to my Crisp settings' mod='crisp'}</a>
                   <a class="crisp-button crisp-neutral u-mb20" onclick="actions.linkWithCrispCloudSync()">🪄 {l s='Relink Crisp to my Prestashop' mod='crisp'}</a>
 
                   <div v-if="store.webservice.key !== ''">
@@ -162,33 +162,3 @@
 {if $urlCloudsync}
 <script src="{$urlCloudsync|escape:'htmlall':'UTF-8'}"></script>
 {/if}
-
-<script>
-  (function() {
-    // PS Accounts initialization
-    if (typeof window.psaccountsVue !== 'undefined' && window.psaccountsVue) {
-      try {
-        window.psaccountsVue.init();
-        store.psAccountsConnected = window.psaccountsVue.isOnboardingCompleted() === true;
-
-        if (!store.psAccountsConnected) {
-          var crispEl = document.getElementById("crisp");
-          var installEl = document.getElementById("installcrisp");
-          if (crispEl) crispEl.style.opacity = "0.5";
-          if (installEl) installEl.style.display = "none";
-        }
-      } catch (e) {
-        console.error('PS Accounts initialization error:', e);
-      }
-    }
-
-    // Cloud Sync initialization
-    if (typeof window.cloudSyncSharingConsent !== 'undefined' && window.cloudSyncSharingConsent) {
-      try {
-        window.cloudSyncSharingConsent.init('#prestashop-cloudsync');
-      } catch (e) {
-        console.error('CloudSync initialization error:', e);
-      }
-    }
-  })();
-</script>

@@ -71,6 +71,32 @@ function postCrispCartData(cart) {
   );
 }
 
+async function fetchCrispContext() {
+  if (!window.CRISP_CONTEXT_URL) {
+    return null;
+  }
+
+  var response = await fetch(window.CRISP_CONTEXT_URL, {
+    method: "POST",
+    credentials: "same-origin",
+    cache: "no-store",
+    headers: {
+      "Accept": "application/json",
+      "X-Requested-With": "XMLHttpRequest",
+    },
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  return response.json();
+}
+
+var crisp_context_promise = fetchCrispContext().catch(function() {
+  return null;
+});
+
 window.CRISP_READY_TRIGGER = async function() {
   // Set session segment (only after first message is sent)
   $crisp.push(["on", "message:sent", () => {
@@ -83,14 +109,17 @@ window.CRISP_READY_TRIGGER = async function() {
     handleCrispCartUpdatedEvent(event)
   })
 
-  if (window?.CRISP_CUSTOMER?.logged_in) {
+  var crisp_context = await crisp_context_promise;
+  var crisp_customer = crisp_context?.customer;
+
+  if (crisp_customer?.logged_in) {
     var identifier = $crisp.get('session:identifier');
     var website_id = window.CRISP_WEBSITE_ID;
 
-    $crisp.push(["set", "user:nickname", CRISP_CUSTOMER.full_name]);
-    $crisp.push(["set", "user:email", CRISP_CUSTOMER.email]);
-    $crisp.push(["set", "user:phone", CRISP_CUSTOMER.phone]);
-    $crisp.push(["set", "session:data", [[["prestashop_customer_id", CRISP_CUSTOMER.id], ["prestashop_address", CRISP_CUSTOMER.address]]]])
+    $crisp.push(["set", "user:nickname", crisp_customer.full_name]);
+    $crisp.push(["set", "user:email", crisp_customer.email]);
+    $crisp.push(["set", "user:phone", crisp_customer.phone]);
+    $crisp.push(["set", "session:data", [[["prestashop_customer_id", crisp_customer.id], ["prestashop_address", crisp_customer.address]]]])
 
     fetch(window.CRISP_PLUGIN_URL+"/visitors/website/"+website_id+"/session/"+identifier+"/customer", {
       method: "POST",
@@ -98,18 +127,20 @@ window.CRISP_READY_TRIGGER = async function() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        "customer_id": CRISP_CUSTOMER.id,
-        "customer_email": CRISP_CUSTOMER.email
+        "customer_id": crisp_customer.id,
+        "customer_email": crisp_customer.email
       }),
     });
   }
 
-  if (window?.CRISP_CART && CRISP_CART?.products.length > 0) {
+  var crisp_cart = crisp_context?.cart;
+
+  if (crisp_cart?.products.length > 0) {
     var _cart = {
       "currency_code": prestashop?.currency?.iso_code,
-      "cart_id": CRISP_CART.id,
-      "currency_id": CRISP_CART.currency_id,
-      "products" : CRISP_CART.products,
+      "cart_id": crisp_cart.id,
+      "currency_id": crisp_cart.currency_id,
+      "products" : crisp_cart.products,
     };
   
     postCrispCartData(_cart);
