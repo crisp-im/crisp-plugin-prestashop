@@ -1,7 +1,7 @@
 composer install --no-dev -o
 
 mkdir crisp
-cp -r config crisp
+cp -r upgrade crisp
 cp -r controllers crisp
 cp -r js crisp
 cp -r translations crisp

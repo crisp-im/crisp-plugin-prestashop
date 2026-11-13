@@ -16,8 +16,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
-
 class AdminCrispController extends ModuleAdminController
 {
     public $module;
@@ -48,10 +46,30 @@ class AdminCrispController extends ModuleAdminController
         Configuration::updateValue('CRISP_CHATBOX_DISABLED', 1);
     }
 
+    /**
+     * Returns a configuration value only if it is set for the current shop context, without
+     * falling back to the shop group or global value (multistore).
+     */
+    private function getContextConfiguration($key)
+    {
+        $idShop = Shop::getContextShopID(true);
+        $idShopGroup = $idShop ? null : Shop::getContextShopGroupID(true);
+
+        // Make sure the configuration is loaded before checking keys.
+        Configuration::get($key);
+
+        if (!Configuration::hasKey($key, null, $idShopGroup, $idShop)) {
+            return false;
+        }
+
+        return Configuration::get($key, null, $idShopGroup, $idShop);
+    }
+
     public function displayAjaxEnableWebService(): void
     {
-        // Delete any Webservice keys created by Crisp.
-        $crisp_webservice_key_id = Configuration::get('CRISP_WEBSERVICE_KEY_ID');
+        // Delete the Webservice key created by Crisp for the current shop context only, never \
+        // the one inherited from another shop context (multistore).
+        $crisp_webservice_key_id = $this->getContextConfiguration('CRISP_WEBSERVICE_KEY_ID');
 
         if ($crisp_webservice_key_id) {
             $webserviceKey = new WebserviceKey((int) $crisp_webservice_key_id);
@@ -63,7 +81,7 @@ class AdminCrispController extends ModuleAdminController
         // Fetch new API key from URL
         $api_key = Tools::getValue('crisp_api_key');
 
-        // Create new API key
+        // Create new API key (associated with the shops of the current shop context)
         $apiAccess = new WebserviceKey();
         $apiAccess->key = $api_key;
         $apiAccess->description = 'Crisp - Used to find customers and their order details.';
@@ -74,19 +92,7 @@ class AdminCrispController extends ModuleAdminController
         Configuration::updateValue('CRISP_WEBSERVICE_KEY_ID', $apiAccess->id);
 
         // Set permissions for webservice key.
-        $permissions = [
-            'customers' => ['GET' => 1],
-            'orders' => ['GET' => 1],
-            'order_details' => ['GET' => 1],
-            'order_carriers' => ['GET' => 1],
-            'order_states' => ['GET' => 1],
-            'carriers' => ['GET' => 1],
-            'carts' => ['GET' => 1],
-            'currencies' => ['GET' => 1],
-            'products' => ['GET' => 1],
-        ];
-
-        WebserviceKey::setPermissionForAccount($apiAccess->id, $permissions);
+        WebserviceKey::setPermissionForAccount($apiAccess->id, Crisp::WEBSERVICE_PERMISSIONS);
     }
 
     public function displayAjaxToggleEnableWebservice(): void
@@ -153,6 +159,11 @@ class AdminCrispController extends ModuleAdminController
             }
         }
 
+        // Grant any new webservice permission to the Crisp keys (eg. after a module update)
+        if ($this->module instanceof Crisp) {
+            $this->module->ensureWebservicePermissions();
+        }
+
         if (!empty($crisp_webservice_key_id)) {
             $webserviceKey = new WebserviceKey((int) $crisp_webservice_key_id);
 
@@ -166,6 +177,7 @@ class AdminCrispController extends ModuleAdminController
         $shop = $this->context->shop;
         $shopName = Configuration::get('PS_SHOP_NAME');
         $shopDomain = $shop->domain;
+        $shopUrl = $shop->id ? $shop->getBaseURL(true) : '';
         $adminEmail = '';
         $adminUsername = '';
 
@@ -192,74 +204,24 @@ class AdminCrispController extends ModuleAdminController
             'crisp_plugin_url' => CRISP_PLUGIN_URL,
             'crisp_app_url' => CRISP_APP_URL,
             'crisp_plugin_source' => CRISP_PLUGIN_SOURCE,
+            'module_version' => ($this->module instanceof Crisp) ? $this->module->version : '',
+            'prestashop_version' => _PS_VERSION_,
             'logo' => '/modules/crisp/logo.png',
             'shop_name' => $shopName,
             'shop_domain' => $shopDomain,
+            'shop_url' => $shopUrl,
             'user_email' => $adminEmail,
             'user_name' => $adminUsername,
         ]);
 
-        $this->context->controller->addCSS(_PS_MODULE_DIR_ . 'crisp/views/css/style.css', 'all');
+        // Version the module assets, so that browsers load the new ones after a module update
+        $assetsVersion = ($this->module instanceof Crisp) ? '?v=' . urlencode($this->module->version) : '';
+
+        $this->context->controller->addCSS(_MODULE_DIR_ . 'crisp/views/css/style.css' . $assetsVersion, 'all', null, false);
         $this->context->controller->addCSS('https://ui-kit.prestashop.com/backoffice/latest/css/bootstrap-prestashop-ui-kit.css', 'all');
         $this->context->controller->addJS('https://ui-kit.prestashop.com/backoffice/latest/js/prestashop-ui-kit.js');
-        $this->context->controller->addJS(_PS_MODULE_DIR_ . 'crisp/views/js/petite-vue.js');
-        $this->context->controller->addJS(_PS_MODULE_DIR_ . 'crisp/views/js/admin.js');
-
-        $moduleManager = ModuleManagerBuilder::getInstance()->build();
-
-        $urlAccountsCdn = '';
-        $urlCloudsync = '';
-
-        if ($moduleManager->isInstalled('ps_accounts')) {
-            $psAccountsModule = Module::getInstanceByName('ps_accounts');
-            if ($psAccountsModule !== false && method_exists($psAccountsModule, 'getService')) {
-                try {
-                    $accountsService = $psAccountsModule->getService('PrestaShop\Module\PsAccounts\Service\PsAccountsService');
-                    $accountsPresenter = $psAccountsModule->getService('PrestaShop\Module\PsAccounts\Presenter\PsAccountsPresenter');
-
-                    if (method_exists($accountsPresenter, 'present') && method_exists($accountsService, 'getAccountsCdn')) {
-                        Media::addJsDef([
-                            'contextPsAccounts' => $accountsPresenter->present('crisp'),
-                        ]);
-                        $urlAccountsCdn = $accountsService->getAccountsCdn();
-                    }
-                } catch (Exception $e) {
-                    $this->context->controller->errors[] = 'PS Accounts: ' . $e->getMessage();
-                }
-            }
-        }
-
-        if ($moduleManager->isInstalled('ps_eventbus')) {
-            $eventbusModule = Module::getInstanceByName('ps_eventbus');
-            if ($eventbusModule !== false && method_exists($eventbusModule, 'getService')) {
-                $eventbusScope = [
-                    'info',
-                    'customers',
-                    'orders',
-                    'carriers',
-                    'carts',
-                    'currencies',
-                    'products',
-                ];
-
-                if (version_compare($eventbusModule->version, '1.9.0', '>=')) {
-                    try {
-                        $eventbusPresenterService = $eventbusModule->getService('PrestaShop\Module\PsEventbus\Service\PresenterService');
-                        if (method_exists($eventbusPresenterService, 'expose')) {
-                            $urlCloudsync = 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js';
-                            Media::addJsDef([
-                                'contextPsEventbus' => $eventbusPresenterService->expose($this->module, $eventbusScope),
-                            ]);
-                        }
-                    } catch (Exception $e) {
-                        $this->context->controller->errors[] = $e->getMessage();
-                    }
-                }
-            }
-        }
-
-        $this->context->smarty->assign('urlAccountsCdn', $urlAccountsCdn);
-        $this->context->smarty->assign('urlCloudsync', $urlCloudsync);
+        $this->context->controller->addJS(_MODULE_DIR_ . 'crisp/views/js/petite-vue.js' . $assetsVersion, false);
+        $this->context->controller->addJS(_MODULE_DIR_ . 'crisp/views/js/admin.js' . $assetsVersion, false);
 
         $moduleTemplatePath = _PS_MODULE_DIR_ . 'crisp/views/templates/admin/configure.tpl';
         $templateContent = $this->context->smarty->fetch($moduleTemplatePath);

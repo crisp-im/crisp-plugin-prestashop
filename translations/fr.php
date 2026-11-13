@@ -3,7 +3,7 @@
 global $_MODULE;
 $_MODULE['<{crisp}prestashop>crisp_09abd3df9e1c00434dd0122c327ba47d'] = 'crisp';
 $_MODULE['<{crisp}prestashop>crisp_6110270ed0eef1450e3044de6ecca40a'] = 'Crisp - Live chat & AI Chatbot';
-$_MODULE['<{crisp}prestashop>crisp_3f39a65f82d550eec7652ceb6e4d6df6'] = 'Améliorez le support client avec Crisp : pour chaque conversation, vous obtenez les données des commandes du client synchronisées avec Prestashop.';
+$_MODULE['<{crisp}prestashop>crisp_4ab835a17b0560c9287eca6b5318f49f'] = 'Améliorez le support client avec Crisp : pour chaque conversation, vous obtenez les données des commandes du client depuis Prestashop.';
 $_MODULE['<{crisp}prestashop>configure_633291b401c53c45191f954829ea6879'] = 'Bienvenue sur votre panneau de configuration Crisp';
 $_MODULE['<{crisp}prestashop>configure_179a4d2c8965ab67fcb1a3b308285934'] = 'Ajouter Crisp à votre Prestashop';
 $_MODULE['<{crisp}prestashop>configure_4d18e141605887c9bc22d74be0065a3c'] = 'Vous pouvez désormais utiliser Crisp depuis votre page d\'accueil';
@@ -13,12 +13,11 @@ $_MODULE['<{crisp}prestashop>configure_9b28f7b5ef440499a113dff8c1c287fb'] = 'Acc
 $_MODULE['<{crisp}prestashop>configure_516dd57448e10a9d81c43cfd5ce9013d'] = 'Relier Crisp à mon Prestashop';
 $_MODULE['<{crisp}prestashop>configure_25b3bc6f6c8001d0bb2b8500bd8eb192'] = 'En cliquant sur le lien suivant, nous ajouterons automatiquement la chatbox Crisp sur votre Prestashop';
 $_MODULE['<{crisp}prestashop>configure_88c18639485b1d7b0d917c66e75c1cd3'] = 'Installer Crisp sur mon Prestashop';
-$_MODULE['<{crisp}prestashop>configure_ce646028e5e9dc806b9a49353bb79833'] = 'Veuillez associer votre compte Prestashop à ce module avant de continuer.';
-$_MODULE['<{crisp}prestashop>configure_7ccff4900a2ae401f46e5242e50075dc'] = 'Les données de Prestashop sont maintenant synchronisées avec Crisp à travers Cloudsync. Activez la connexion avec votre boutique afin de voir les données de vos clients depuis Crisp.';
+$_MODULE['<{crisp}prestashop>configure_2ab193ac7a9d8681e1d15d297213b04a'] = 'Connectez le webservice de votre boutique à Crisp pour voir les commandes de vos clients depuis Crisp. Prestashop ne partage plus les données de votre boutique avec Crisp via CloudSync.';
 $_MODULE['<{crisp}prestashop>configure_5f371f22c35f261aac1400fbc700561c'] = 'Inclure la Chatbox Crisp sur votre boutique en ligne.';
 $_MODULE['<{crisp}prestashop>configure_3a220dc592e9c4c3ae20df185f94fe84'] = 'Activez cette option pour afficher la Chatbox sur votre boutique.';
+$_MODULE['<{crisp}prestashop>configure_ea93bb8fbdab144bf944ec5c538176fd'] = 'Crisp utilise le webservice de votre boutique pour retrouver vos clients et leurs commandes. Si cette option est désactivée, les commandes ne seront plus visibles depuis Crisp.';
 $_MODULE['<{crisp}prestashop>configure_5ed0265ffe0a132444add7166d37c110'] = 'Utiliser les API de la boutique en ligne.';
-$_MODULE['<{crisp}prestashop>configure_bca51dc2d230f25861bbafb8d3d7986e'] = 'Activez cette option pour permettre à Crisp d\'utiliser les données de votre boutique en ligne pour trouver les clients et les détails de leurs commandes.';
 $_MODULE['<{crisp}prestashop>configure_d68af78b816b08e711e70d9a18440f25'] = 'Configurer Crisp pour votre boutique Prestashop';
 $_MODULE['<{crisp}prestashop>configure_a301fb6c9931e5b86a9b36a31b9c9e6d'] = 'Options supplémentaires';
 $_MODULE['<{crisp}prestashop>configure_402a8d299a4018f8fd24b7e1b87ea357'] = 'Crisp a été relié avec succès à vos données Prestashop.';

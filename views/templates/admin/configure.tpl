@@ -17,6 +17,8 @@
   const CRISP_PLUGIN_ID = "{$crisp_plugin_identifier|escape:'javascript':'UTF-8'}";
   const CRISP_PLUGIN_URL = "{$crisp_plugin_url|escape:'javascript':'UTF-8'}";
   const CRISP_PLUGIN_SOURCE = "{$crisp_plugin_source|escape:'javascript':'UTF-8'}";
+  const MODULE_VERSION = "{$module_version|escape:'javascript':'UTF-8'}";
+  const PRESTASHOP_VERSION = "{$prestashop_version|escape:'javascript':'UTF-8'}";
   const API_KEY = "{$crisp_api_key|escape:'javascript':'UTF-8'}";
   const WEBSITE_ID = "{$website_id|escape:'javascript':'UTF-8'}";
   const IS_CONNECTED = "{$is_crisp_working|escape:'javascript':'UTF-8'}";
@@ -29,6 +31,7 @@
   const API_KEY_INVALID = "{$api_key_invalid|escape:'javascript':'UTF-8'}";
   const SHOP_NAME = "{$shop_name|escape:'javascript':'UTF-8'}";
   const SHOP_DOMAIN = "{$shop_domain|escape:'javascript':'UTF-8'}";
+  const SHOP_URL = "{$shop_url|escape:'javascript':'UTF-8'}";
   const USER_EMAIL = "{$user_email|escape:'javascript':'UTF-8'}";
   const USER_NAME = "{$user_name|escape:'javascript':'UTF-8'}";
 </script>
@@ -42,23 +45,8 @@
   </div>
 
   <div>
-    <div class="row mb-2">
-      <div class="col-md-5 col-12 pr-1 pl-0">
-        <prestashop-accounts style="height:100%;display:flex;width:100%"></prestashop-accounts>
-      </div>
-      <div class="col-md-7 col-12 pl-1 pr-0">
-        <div id="prestashop-cloudsync" style="height:100%;display: flex;"></div>
-      </div>
-    </div>
-
     <div class="row">
       <div class="col-12 p-0">
-        <div v-if="!store.psAccountsConnected" class="alert alert-warning" role="alert">
-          <p class="alert-text">
-            {l s='Please associate your Prestashop account with this module before continuing.' mod='crisp'}
-          </p>
-        </div>
-
         <div id="crisp">
           <div v-if="store.isConnected" class="crisp-panel">
             <div class="wrap crisp-wrap">
@@ -70,7 +58,7 @@
                 <div id="installcrisp" class="d-flex flex-column">
                   <a class="crisp-button crisp u-mb20" href="{$crisp_app_url|escape:'htmlall':'UTF-8'}/website/{$website_id|escape:'htmlall':'UTF-8'}/inbox" target="_blank">💬 {l s='Open Crisp inbox' mod='crisp'}</a>
                   <a class="crisp-button crisp-neutral u-mb20" href="{$crisp_app_url|escape:'htmlall':'UTF-8'}/settings/website/{$website_id|escape:'htmlall':'UTF-8'}" target="_blank">⚙️ {l s='Go to my Crisp settings' mod='crisp'}</a>
-                  <a class="crisp-button crisp-neutral u-mb20" onclick="actions.linkWithCrispCloudSync()">🪄 {l s='Relink Crisp to my Prestashop' mod='crisp'}</a>
+                  <a class="crisp-button crisp-neutral u-mb20" onclick="actions.linkWithCrisp()">🪄 {l s='Relink Crisp to my Prestashop' mod='crisp'}</a>
 
                   <div v-if="store.webservice.key !== ''">
                     <div class="crisp-title">{l s='Enable your Stores Webservice' mod='crisp'}</div>
@@ -105,7 +93,7 @@
 
                         <div v-else-if="store.webservice.error === ''" class="alert alert-warning" role="alert">
                           <p class="alert-text">
-                            {l s='Prestashop data is now syncing with Crisp through Cloudsync. Enable your stores webservice in order to view customers\' data from Crisp.' mod='crisp'}
+                            {l s='Link your store webservice to Crisp in order to view your customers\' orders from Crisp. Prestashop no longer shares your store data with Crisp through CloudSync.' mod='crisp'}
                           </p>
                         </div>
                       </div>
@@ -124,7 +112,7 @@
 
                     <div class="crisp-option">
                       <label for="crisp-chatbox">
-                        {l s='Use stores webservice.' mod='crisp'} <span class="crisp-label-subdued"> {l s='Enable this option to allow Crisp to use the stores webservice in order to find customers and their order details.' mod='crisp'}</span>
+                        {l s='Use stores webservice.' mod='crisp'} <span class="crisp-label-subdued"> {l s='Crisp uses the stores webservice to find customers and their order details. If disabled, orders will no longer be visible from Crisp.' mod='crisp'}</span>
                       </label>
                       <input v-model="store.webservice.active" onchange="actions.toggleWebservice()" data-toggle="switch" class="switch-input-lg" id="crisp-chatbox" data-inverse="true" type="checkbox" name="switch[]" ref="webserviceToggle" />
                     </div>
@@ -140,7 +128,7 @@
                 <div class="crisp-title">{l s='Link Crisp with your Prestashop data' mod='crisp'}</div>
                 <div class="crisp-actions">
                   <p class="crisp-subtitle" class="mb-3">{l s='By clicking this link you will allow data to flow between Crisp and Prestashop' mod='crisp'}</p>
-                  <a id="installcrisp" class="crisp-button crisp" href="#" onclick="actions.linkWithCrispCloudSync()">{l s='Install Crisp on my Prestashop' mod='crisp'}</a>
+                  <a id="installcrisp" class="crisp-button crisp" href="#" onclick="actions.linkWithCrisp()">{l s='Install Crisp on my Prestashop' mod='crisp'}</a>
                 </div>
 
                 <div class="crisp-side">
@@ -154,11 +142,3 @@
     </div>
   </div>
 </div>
-
-
-{if $urlAccountsCdn}
-<script src="{$urlAccountsCdn|escape:'htmlall':'UTF-8'}" rel=preload></script>
-{/if}
-{if $urlCloudsync}
-<script src="{$urlCloudsync|escape:'htmlall':'UTF-8'}"></script>
-{/if}

@@ -19,6 +19,8 @@ const AJAX_WEBSERVICE_ENABLE = "&action=toggleEnableWebservice&ajax=true";
 const AJAX_WEBSERVICE_DISABLE = "&action=toggleDisableWebservice&ajax=true";
 const AJAX_CHATBOX_ENABLE = "&action=enableChatbox&ajax=true";
 const AJAX_CHATBOX_DISABLE = "&action=disableChatbox&ajax=true";
+const WEBSERVICE_AUTH_MAX_ATTEMPTS = 8;
+const WEBSERVICE_AUTH_RETRY_DELAY = 5000;
 
 /********************************************************************
  * Translations
@@ -58,7 +60,6 @@ const SUCCESS_MESSAGES = {
 }
 
 const store = PetiteVue.reactive({
-  psAccountsConnected: false,
   isConnected: false,
   chatboxEnabled: true,
   adminUrl: "",
@@ -85,14 +86,25 @@ const actions = {
    * @public
    * @return {undefined}
    */
-  linkWithCrispCloudSync() {
-    if (window.psaccountsVue.isOnboardingCompleted() != true) {
-      return;
+  linkWithCrisp() {
+    var _redirectURL = btoa(store.callbackUrl);
+
+    // Shops are linked through their webservice only
+    var _shopID = "null";
+
+    var _payload = "redirect=" + _redirectURL + "&shop_id=" + _shopID + "&plugin_source=" + CRISP_PLUGIN_SOURCE;
+
+    if (SHOP_URL !== "") {
+      _payload += "&shop_url=" + encodeURIComponent(SHOP_URL);
     }
 
-    var _redirectURL = btoa(store.callbackUrl);
-    var _shopID = contextPsAccounts.currentShop.uuid;
-    var _payload = "redirect=" + _redirectURL + "&shop_id=" + _shopID + "&plugin_source=" + CRISP_PLUGIN_SOURCE;
+    if (MODULE_VERSION !== "") {
+      _payload += "&module_version=" + encodeURIComponent(MODULE_VERSION);
+    }
+
+    if (PRESTASHOP_VERSION !== "") {
+      _payload += "&prestashop_version=" + encodeURIComponent(PRESTASHOP_VERSION);
+    }
     var add_to_crisp_link = store.crispInstallLink + btoa(_payload);
 
     if (SHOP_NAME !== "") {
@@ -143,7 +155,7 @@ const actions = {
    * @public
    * @return {undefined}
    */
-  authenticateWebserviceInCrisp() {
+  authenticateWebserviceInCrisp(attempt = 1) {
     let _params = new URLSearchParams(store.callbackUrl)
     let _token = _params.get("token")
 
@@ -164,6 +176,15 @@ const actions = {
     const _url = `${CRISP_PLUGIN_URL}/admin/config/webservice/auth?website_id=${store.websiteId}&token=${_token}`
 
     fetch(_url).then(((response) => {
+      // Website was just linked and is not ready yet in Crisp, retry shortly
+      if (response.status === 425 && attempt < WEBSERVICE_AUTH_MAX_ATTEMPTS) {
+        setTimeout(() => {
+          actions.authenticateWebserviceInCrisp(attempt + 1);
+        }, WEBSERVICE_AUTH_RETRY_DELAY);
+
+        return;
+      }
+
       store.webservice.loading = false;
       store.webservice.active = true;
 
@@ -342,39 +363,6 @@ const actions = {
   },
 };
 
-function initializePrestaShopComponents() {
-  if (typeof window.psaccountsVue !== "undefined" && window.psaccountsVue) {
-    try {
-      window.psaccountsVue.init();
-      store.psAccountsConnected = window.psaccountsVue.isOnboardingCompleted() === true;
-
-      if (!store.psAccountsConnected) {
-        const crispElement = document.getElementById("crisp");
-        const installElement = document.getElementById("installcrisp");
-
-        if (crispElement) crispElement.style.opacity = "0.5";
-        if (installElement) installElement.style.display = "none";
-      }
-    } catch (error) {
-      console.error("PS Accounts initialization error:", error);
-    }
-  }
-
-  const cloudSyncAnchor = document.querySelector("#prestashop-cloudsync");
-
-  if (
-    cloudSyncAnchor &&
-    typeof window.cloudSyncSharingConsent !== "undefined" &&
-    window.cloudSyncSharingConsent
-  ) {
-    try {
-      window.cloudSyncSharingConsent.init("#prestashop-cloudsync");
-    } catch (error) {
-      console.error("CloudSync initialization error:", error);
-    }
-  }
-}
-
 /**
  * Loads preferences into store
  * @returns {object}  empty object
@@ -434,7 +422,11 @@ function InitPreferences() {
   return {
     mounted() {
       store.$refs = this.$refs;
-      initializePrestaShopComponents();
+
+      // Just linked to Crisp with a new webservice key: link the webservice right away (one-click)
+      if (store.isConnected && store.webservice.invalid && store.webservice.key !== "") {
+        actions.linkWithCrispWebservice();
+      }
     }
   };
 }

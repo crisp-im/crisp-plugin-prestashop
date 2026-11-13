@@ -5,7 +5,7 @@
  * @author    Crisp IM SAS
  * @copyright 2026 Crisp IM SAS
  * @license   All rights reserved to Crisp IM SAS
- * @version 1.2.3
+ * @version 1.3.0
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -24,14 +24,25 @@ if (file_exists($autoloadPath)) {
     require_once $autoloadPath;
 }
 
-use Prestashop\ModuleLibMboInstaller\Installer;
-use Prestashop\ModuleLibMboInstaller\Presenter;
-use PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer;
-use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
-
 class Crisp extends Module
 {
-    private $container;
+    /**
+     * Webservice resources Crisp reads to find customers and their orders.
+     */
+    public const WEBSERVICE_PERMISSIONS = [
+        'customers' => ['GET' => 1],
+        'orders' => ['GET' => 1],
+        'order_details' => ['GET' => 1],
+        'order_carriers' => ['GET' => 1],
+        'order_states' => ['GET' => 1],
+        'order_slip' => ['GET' => 1],
+        'carriers' => ['GET' => 1],
+        'carts' => ['GET' => 1],
+        'currencies' => ['GET' => 1],
+        'products' => ['GET' => 1],
+        'combinations' => ['GET' => 1],
+    ];
+
     public $useLightMode;
     public $page;
     protected $config_form = false;
@@ -41,7 +52,7 @@ class Crisp extends Module
         $this->name = 'crisp';
         $this->tab = 'administration';
         $this->author = 'Crisp IM';
-        $this->version = '1.2.3';
+        $this->version = '1.3.0';
         $this->ps_versions_compliancy = [
             'min' => '8.0.0',
             'max' => _PS_VERSION_,
@@ -55,42 +66,23 @@ class Crisp extends Module
         parent::__construct();
 
         $this->displayName = $this->l('Crisp - Live chat & AI Chatbot');
-        $this->description = $this->l("Improve customer support with Crisp: for each conversation, you get customer's orders data synced from Prestashop.");
-
-        if ($this->container === null) {
-            $this->container = new ServiceContainer(
-                $this->name,
-                _CRISP_PATH_
-            );
-        }
+        $this->description = $this->l("Improve customer support with Crisp: for each conversation, you get customer's orders data from Prestashop.");
     }
 
     public function install()
     {
-        $mboStatus = (new Presenter())->present();
-        if (!$mboStatus['isInstalled']) {
-            try {
-                $mboInstaller = new Installer(_PS_VERSION_);
-                $result = $mboInstaller->installModule();
-                $this->installDependencies();
-            } catch (Exception $e) {
-                $this->context->controller->errors[] = $e->getMessage();
-                return 'Error during MBO installation';
-            }
-        } else {
-            $this->installDependencies();
-        }
-
         return parent::install() && $this->registerHook('displayHeader') && $this->registerHook('displayBackOfficeHeader') && $this->installTab();
     }
 
     public function uninstall()
     {
-        // Delete Webservice keys created by Crisp.
-        $crisp_webservice_key_id = Configuration::get('CRISP_WEBSERVICE_KEY_ID');
+        // Delete Webservice keys created by Crisp, for every shop context (multistore).
+        $crisp_webservice_key_ids = Db::getInstance()->executeS(
+            'SELECT DISTINCT value FROM ' . _DB_PREFIX_ . 'configuration WHERE name = "CRISP_WEBSERVICE_KEY_ID"'
+        );
 
-        if ($crisp_webservice_key_id) {
-            $webserviceKey = new WebserviceKey((int) $crisp_webservice_key_id);
+        foreach ($crisp_webservice_key_ids ?: [] as $crisp_webservice_key_id) {
+            $webserviceKey = new WebserviceKey((int) $crisp_webservice_key_id['value']);
             if (Validate::isLoadedObject($webserviceKey)) {
                 $webserviceKey->delete();
             }
@@ -104,23 +96,25 @@ class Crisp extends Module
         return parent::uninstall() && $this->uninstallTab();
     }
 
-    public function installDependencies()
+    /**
+     * Grants the current webservice permissions to the webservice keys created by Crisp, for every
+     * shop context (multistore). Lets merchants get new permissions by updating the module.
+     */
+    public function ensureWebservicePermissions()
     {
-        $moduleManager = ModuleManagerBuilder::getInstance()->build();
+        $crisp_webservice_key_ids = Db::getInstance()->executeS(
+            'SELECT DISTINCT value FROM ' . _DB_PREFIX_ . 'configuration WHERE name = "CRISP_WEBSERVICE_KEY_ID"'
+        );
 
-        /* PS Account */
-        if (!$moduleManager->isInstalled('ps_accounts')) {
-            $moduleManager->install('ps_accounts');
-        } elseif (!$moduleManager->isEnabled('ps_accounts')) {
-            $moduleManager->enable('ps_accounts');
+        foreach ($crisp_webservice_key_ids ?: [] as $crisp_webservice_key_id) {
+            $webserviceKey = new WebserviceKey((int) $crisp_webservice_key_id['value']);
+
+            if (Validate::isLoadedObject($webserviceKey)) {
+                WebserviceKey::setPermissionForAccount((int) $webserviceKey->id, self::WEBSERVICE_PERMISSIONS);
+            }
         }
 
-        /* Cloud Sync - PS Eventbus */
-        if (!$moduleManager->isInstalled('ps_eventbus')) {
-            $moduleManager->install('ps_eventbus');
-        } elseif (!$moduleManager->isEnabled('ps_eventbus')) {
-            $moduleManager->enable('ps_eventbus');
-        }
+        return true;
     }
 
     public function installTab()
@@ -150,11 +144,6 @@ class Crisp extends Module
         }
 
         return true;
-    }
-
-    public function getService($serviceName)
-    {
-        return $this->container->getService($serviceName);
     }
 
     public function getContent()
