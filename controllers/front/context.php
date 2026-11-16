@@ -57,7 +57,7 @@ class CrispContextModuleFrontController extends ModuleFrontController
     {
         $customer = $this->context->customer;
 
-        if (!$customer || !$customer->isLogged()) {
+        if (!Validate::isLoadedObject($customer) || !$customer->isLogged()) {
             return null;
         }
 
@@ -91,7 +91,7 @@ class CrispContextModuleFrontController extends ModuleFrontController
     {
         $cart = $this->context->cart;
 
-        if (!$cart || !$cart->id) {
+        if (!Validate::isLoadedObject($cart)) {
             return null;
         }
 

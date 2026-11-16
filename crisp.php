@@ -5,7 +5,7 @@
  * @author    Crisp IM SAS
  * @copyright 2026 Crisp IM SAS
  * @license   All rights reserved to Crisp IM SAS
- * @version 1.3.1
+ * @version 2.0.0
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -52,7 +52,7 @@ class Crisp extends Module
         $this->name = 'crisp';
         $this->tab = 'administration';
         $this->author = 'Crisp IM';
-        $this->version = '1.3.1';
+        $this->version = '2.0.0';
         $this->ps_versions_compliancy = [
             'min' => '8.0.0',
             'max' => _PS_VERSION_,
